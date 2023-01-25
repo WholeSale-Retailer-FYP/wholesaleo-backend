@@ -3,10 +3,11 @@ import http from "http";
 import mongoose from "mongoose";
 import { config } from "./config/config";
 import Logging from "./library/Logging";
-import authorRoutes from "./routes/Author";
 import provinceRoutes from "./routes/Province";
 import cityRoutes from "./routes/City";
 import regionRoutes from "./routes/Region";
+import itemCategoryRoutes from "./routes/ItemCategory";
+import itemRoutes from "./routes/Item";
 
 const router = express();
 
@@ -61,10 +62,11 @@ const StartServer = () => {
   });
 
   /** Routes */
-  router.use("/authors", authorRoutes);
   router.use("/province", provinceRoutes);
   router.use("/city", cityRoutes);
   router.use("/region", regionRoutes);
+  router.use("/itemCategory", itemCategoryRoutes);
+  router.use("/item", itemRoutes);
 
   /** Healthcheck */
   router.get("/ping", (req, res, next) =>
