@@ -1,14 +1,30 @@
 import { NextFunction, Request, Response } from "express";
 import mongoose from "mongoose";
 import Item from "../models/Item";
+import { cloudinaryConfig } from "../config/cloudinaryConfig";
+import { UploadApiResponse, v2 as cloudinary } from "cloudinary";
 
 const createItem = async (req: Request, res: Response, next: NextFunction) => {
   const { name, itemCategoryId } = req.body;
   try {
-    const item = await Item.create({ name, itemCategoryId });
+    if (!req.file) res.status(500).json({ message: "No file present" });
+    let uploadedFile: UploadApiResponse;
+
+    uploadedFile = await cloudinary.uploader.upload(req.file!.path, {
+      folder: "items",
+      resource_type: "auto",
+      width: 350,
+      height: 350,
+    });
+
+    const item = await Item.create({
+      name,
+      itemCategoryId,
+      image: uploadedFile.secure_url,
+    });
     res.status(201).json({ data: item });
   } catch (error) {
-    res.status(500).json({ message: error });
+    console.log(error);
   }
 };
 
