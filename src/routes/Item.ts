@@ -12,6 +12,7 @@ router.post(
   controller.createItem
 );
 router.get("/get/:itemId", controller.readItem);
+router.get("/get/category/:itemCategoryId", controller.readItemOfCategory);
 router.get("/get/", controller.readAllItem);
 router.put("/update/", controller.updateItem);
 router.delete("/delete/:itemId", controller.deleteItem);

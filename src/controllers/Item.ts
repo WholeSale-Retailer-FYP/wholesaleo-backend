@@ -32,10 +32,30 @@ const readItem = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const itemId = req.params.itemId;
     const item = await Item.findById(itemId).populate("itemCategoryId", "name");
-    if (item) {
-      res.status(200).json({ data: item });
+    if (!item) {
+      throw new Error("Item Not Found");
     }
-    throw new Error("Item Not Found");
+    res.status(200).json({ data: item });
+  } catch (error) {
+    res.status(500).json({ message: error });
+  }
+};
+
+const readItemOfCategory = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const itemCategoryId = req.params.itemCategoryId;
+    const item = await Item.find({ itemCategoryId }).populate(
+      "itemCategoryId",
+      "name"
+    );
+    if (!item) {
+      throw new Error("Item Not Found");
+    }
+    res.status(200).json({ data: item });
   } catch (error) {
     res.status(500).json({ message: error });
   }
@@ -53,7 +73,6 @@ const readAllItem = async (req: Request, res: Response, next: NextFunction) => {
 const updateItem = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { _id, name, itemCategoryId } = req.body;
-    console.log("first");
     const updatedItem = await Item.updateOne(
       { _id },
       { name: name, itemCategoryId: itemCategoryId }
@@ -80,6 +99,7 @@ const deleteItem = async (req: Request, res: Response, next: NextFunction) => {
 export default {
   createItem,
   readAllItem,
+  readItemOfCategory,
   readItem,
   updateItem,
   deleteItem,

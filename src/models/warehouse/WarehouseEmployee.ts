@@ -28,7 +28,12 @@ const WarehouseEmployeeSchema: Schema = new Schema(
     phoneNumber: { type: Number, required: true },
     cnic: { type: Number, required: true },
     password: { type: String, required: true },
-    role: { type: Roles, required: true },
+    role: {
+      type: Number,
+      enum: Roles,
+      default: Roles.Employee,
+      required: true,
+    },
   },
   {
     versionKey: false,
