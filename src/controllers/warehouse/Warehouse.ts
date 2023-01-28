@@ -31,11 +31,15 @@ const readWarehouse = async (
 ) => {
   try {
     const warehouseId = req.params.warehouseId;
-    const warehouse = await Warehouse.findById(warehouseId);
-    if (warehouse) {
-      res.status(200).json({ data: warehouse });
+    const warehouse = await Warehouse.findById(warehouseId).populate([
+      "cityId",
+      "regionId",
+      "provinceId",
+    ]);
+    if (!warehouse) {
+      throw new Error("Warehouse Not Found");
     }
-    throw new Error("Warehouse Not Found");
+    res.status(200).json({ data: warehouse });
   } catch (error) {
     res.status(500).json({ message: error });
   }
@@ -47,8 +51,33 @@ const readAllWarehouse = async (
   next: NextFunction
 ) => {
   try {
-    const warehouses = await Warehouse.find();
+    const warehouses = await Warehouse.find().populate([
+      "cityId",
+      "regionId",
+      "provinceId",
+    ]);
     res.status(200).json({ data: warehouses });
+  } catch (error) {
+    res.status(500).json({ message: error });
+  }
+};
+
+const verifyWarehouse = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { _id } = req.body;
+    console.log("first");
+    const updatedWarehouse = await Warehouse.updateOne(
+      { _id },
+      {
+        verified: true,
+      }
+    );
+    if (!updatedWarehouse) throw new Error("Warehouse not found!");
+    res.status(201).json({ data: updatedWarehouse });
   } catch (error) {
     res.status(500).json({ message: error });
   }
@@ -101,6 +130,7 @@ export default {
   createWarehouse,
   readAllWarehouse,
   readWarehouse,
+  verifyWarehouse,
   updateWarehouse,
   deleteWarehouse,
 };

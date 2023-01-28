@@ -1,6 +1,9 @@
 import { NextFunction, Request, Response } from "express";
 import mongoose from "mongoose";
 import WarehouseEmployee from "../../models/warehouse/WarehouseEmployee";
+const bcrypt = require("bcrypt");
+
+// TODO: user Login
 
 const createWarehouseEmployee = async (
   req: Request,
@@ -8,13 +11,16 @@ const createWarehouseEmployee = async (
   next: NextFunction
 ) => {
   const { name, cnic, phoneNumber, role, password, warehouseId } = req.body;
+
   try {
+    const salt = await bcrypt.genSalt();
+    const hashedPassword = await bcrypt.hash(password, salt);
     const warehouse = await WarehouseEmployee.create({
       name,
       cnic,
       phoneNumber,
       role,
-      password,
+      password: hashedPassword,
       warehouseId,
     });
     res.status(201).json({ data: warehouse });
@@ -61,7 +67,6 @@ const updateWarehouseEmployee = async (
   try {
     const { _id, name, cnic, phoneNumber, role, password, warehouseId } =
       req.body;
-    console.log("first");
     const updatedWarehouseEmployee = await WarehouseEmployee.updateOne(
       { _id },
       {

@@ -39,7 +39,10 @@ const readWarehouseInventory = async (
 ) => {
   try {
     const warehouseId = req.params.warehouseId;
-    const warehouse = await WarehouseInventory.findById(warehouseId);
+    const warehouse = await WarehouseInventory.findById(warehouseId).populate([
+      { path: "itemId", select: "name" },
+      { path: "warehouseId", select: "name" },
+    ]);
     if (warehouse) {
       res.status(200).json({ data: warehouse });
     }
@@ -55,7 +58,10 @@ const readAllWarehouseInventory = async (
   next: NextFunction
 ) => {
   try {
-    const warehouses = await WarehouseInventory.find();
+    const warehouses = await WarehouseInventory.find().populate([
+      { path: "itemId", select: "name" },
+      { path: "warehouseId", select: "name" },
+    ]);
     res.status(200).json({ data: warehouses });
   } catch (error) {
     res.status(500).json({ message: error });
@@ -78,7 +84,6 @@ const updateWarehouseInventory = async (
       warehouseId,
       itemId,
     } = req.body;
-    console.log("first");
     const updatedWarehouseInventory = await WarehouseInventory.updateOne(
       { _id },
       {
