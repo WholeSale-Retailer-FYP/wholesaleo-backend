@@ -12,7 +12,8 @@ const createRegion = async (
     const region = await Region.create({ name, cityId });
     res.status(201).json({ data: region });
   } catch (error) {
-    res.status(500).json({ message: error });
+    if (error instanceof Error)
+      res.status(500).json({ message: error.message });
   }
 };
 
@@ -25,12 +26,13 @@ const readRegion = async (req: Request, res: Response, next: NextFunction) => {
         path: "provinceId",
       },
     });
-    if (region) {
-      res.status(200).json({ data: region });
+    if (!region) {
+      throw new Error("Region Not Found");
     }
-    throw new Error("Region Not Found");
+    res.status(200).json({ data: region });
   } catch (error) {
-    res.status(500).json({ message: error });
+    if (error instanceof Error)
+      res.status(500).json({ message: error.message });
   }
 };
 
@@ -48,7 +50,8 @@ const readAllRegion = async (
     });
     res.status(200).json({ data: regions });
   } catch (error) {
-    res.status(500).json({ message: error });
+    if (error instanceof Error)
+      res.status(500).json({ message: error.message });
   }
 };
 
@@ -59,15 +62,15 @@ const updateRegion = async (
 ) => {
   try {
     const { _id, name, cityId } = req.body;
-    console.log("first");
     const updatedRegion = await Region.updateOne(
       { _id },
-      { name: name, cityId: cityId }
+      { name, cityId: cityId }
     );
     if (!updatedRegion) throw new Error("Region not found!");
     res.status(201).json({ data: updatedRegion });
   } catch (error) {
-    res.status(500).json({ message: error });
+    if (error instanceof Error)
+      res.status(500).json({ message: error.message });
   }
 };
 
@@ -83,7 +86,8 @@ const deleteRegion = async (
 
     res.status(201).json({ data: true, message: "Deletion was successful!" });
   } catch (error) {
-    res.status(500).json({ message: error });
+    if (error instanceof Error)
+      res.status(500).json({ message: error.message });
   }
 };
 

@@ -38,8 +38,10 @@ const readWarehouseInventory = async (
   next: NextFunction
 ) => {
   try {
-    const warehouseId = req.params.warehouseId;
-    const warehouse = await WarehouseInventory.findById(warehouseId).populate([
+    const warehouseInventoryId = req.params.warehouseInventoryId;
+    const warehouse = await WarehouseInventory.findById(
+      warehouseInventoryId
+    ).populate([
       { path: "itemId", select: "name" },
       { path: "warehouseId", select: "name" },
     ]);
@@ -47,6 +49,29 @@ const readWarehouseInventory = async (
       res.status(200).json({ data: warehouse });
     }
     throw new Error("WarehouseInventory Not Found");
+  } catch (error) {
+    res.status(500).json({ message: error });
+  }
+};
+
+const readWarehouseInventoryOfWarehouse = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const warehouseId = req.params.warehouseId;
+    const warehouse = await WarehouseInventory.find({
+      warehouseId,
+    }).populate([
+      { path: "itemId", select: "name" },
+      { path: "warehouseId", select: "name" },
+    ]);
+
+    if (!warehouse) {
+      throw new Error("WarehouseInventory Not Found");
+    }
+    res.status(200).json({ data: warehouse });
   } catch (error) {
     res.status(500).json({ message: error });
   }
@@ -64,7 +89,8 @@ const readAllWarehouseInventory = async (
     ]);
     res.status(200).json({ data: warehouses });
   } catch (error) {
-    res.status(500).json({ message: error });
+    if (error instanceof Error)
+      res.status(500).json({ message: error.message });
   }
 };
 
@@ -100,7 +126,8 @@ const updateWarehouseInventory = async (
       throw new Error("WarehouseInventory not found!");
     res.status(201).json({ data: updatedWarehouseInventory });
   } catch (error) {
-    res.status(500).json({ message: error });
+    if (error instanceof Error)
+      res.status(500).json({ message: error.message });
   }
 };
 
@@ -116,13 +143,15 @@ const deleteWarehouseInventory = async (
 
     res.status(201).json({ data: true, message: "Deletion was successful!" });
   } catch (error) {
-    res.status(500).json({ message: error });
+    if (error instanceof Error)
+      res.status(500).json({ message: error.message });
   }
 };
 
 export default {
   createWarehouseInventory,
   readAllWarehouseInventory,
+  readWarehouseInventoryOfWarehouse,
   readWarehouseInventory,
   updateWarehouseInventory,
   deleteWarehouseInventory,

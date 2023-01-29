@@ -17,6 +17,6 @@ const multerUploads = multer({
   storage,
   //   fileFilter,
   //   500KB
-  limits: { fileSize: 500000, files: 1 },
+  // limits: { fileSize: 500000, files: 1 },
 }).single("image");
 export { multerUploads };

@@ -1,7 +1,7 @@
 import express from "express";
 import { cloudinaryConfig } from "../config/cloudinaryConfig";
-import controller from "../controllers/Item";
 import * as multerUploads from "../utils/multer";
+import controller from "../controllers/Item";
 
 const router = express.Router();
 

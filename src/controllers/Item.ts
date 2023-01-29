@@ -24,7 +24,8 @@ const createItem = async (req: Request, res: Response, next: NextFunction) => {
     });
     res.status(201).json({ data: item });
   } catch (error) {
-    console.log(error);
+    if (error instanceof Error)
+      res.status(500).json({ message: error.message });
   }
 };
 
@@ -37,7 +38,8 @@ const readItem = async (req: Request, res: Response, next: NextFunction) => {
     }
     res.status(200).json({ data: item });
   } catch (error) {
-    res.status(500).json({ message: error });
+    if (error instanceof Error)
+      res.status(500).json({ message: error.message });
   }
 };
 
@@ -57,7 +59,8 @@ const readItemOfCategory = async (
     }
     res.status(200).json({ data: item });
   } catch (error) {
-    res.status(500).json({ message: error });
+    if (error instanceof Error)
+      res.status(500).json({ message: error.message });
   }
 };
 
@@ -66,10 +69,12 @@ const readAllItem = async (req: Request, res: Response, next: NextFunction) => {
     const items = await Item.find().populate("itemCategoryId", "name");
     res.status(200).json({ data: items });
   } catch (error) {
-    res.status(500).json({ message: error });
+    if (error instanceof Error)
+      res.status(500).json({ message: error.message });
   }
 };
 
+// todo: Handle image update. Delete previous image in Cloudinary andn then add new image to Cloudinary
 const updateItem = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { _id, name, itemCategoryId } = req.body;
@@ -80,7 +85,8 @@ const updateItem = async (req: Request, res: Response, next: NextFunction) => {
     if (!updatedItem) throw new Error("Item not found!");
     res.status(201).json({ data: updatedItem });
   } catch (error) {
-    res.status(500).json({ message: error });
+    if (error instanceof Error)
+      res.status(500).json({ message: error.message });
   }
 };
 
@@ -92,7 +98,8 @@ const deleteItem = async (req: Request, res: Response, next: NextFunction) => {
 
     res.status(201).json({ data: true, message: "Deletion was successful!" });
   } catch (error) {
-    res.status(500).json({ message: error });
+    if (error instanceof Error)
+      res.status(500).json({ message: error.message });
   }
 };
 

@@ -20,7 +20,8 @@ const createWarehouse = async (
     });
     res.status(201).json({ data: warehouse });
   } catch (error) {
-    res.status(500).json({ message: error });
+    if (error instanceof Error)
+      res.status(500).json({ message: error.message });
   }
 };
 
@@ -41,7 +42,8 @@ const readWarehouse = async (
     }
     res.status(200).json({ data: warehouse });
   } catch (error) {
-    res.status(500).json({ message: error });
+    if (error instanceof Error)
+      res.status(500).json({ message: error.message });
   }
 };
 
@@ -58,7 +60,8 @@ const readAllWarehouse = async (
     ]);
     res.status(200).json({ data: warehouses });
   } catch (error) {
-    res.status(500).json({ message: error });
+    if (error instanceof Error)
+      res.status(500).json({ message: error.message });
   }
 };
 
@@ -69,7 +72,6 @@ const verifyWarehouse = async (
 ) => {
   try {
     const { _id } = req.body;
-    console.log("first");
     const updatedWarehouse = await Warehouse.updateOne(
       { _id },
       {
@@ -79,7 +81,8 @@ const verifyWarehouse = async (
     if (!updatedWarehouse) throw new Error("Warehouse not found!");
     res.status(201).json({ data: updatedWarehouse });
   } catch (error) {
-    res.status(500).json({ message: error });
+    if (error instanceof Error)
+      res.status(500).json({ message: error.message });
   }
 };
 
@@ -91,7 +94,6 @@ const updateWarehouse = async (
   try {
     const { _id, name, cityId, regionId, provinceId, longitude, latitude } =
       req.body;
-    console.log("first");
     const updatedWarehouse = await Warehouse.updateOne(
       { _id },
       {
@@ -106,7 +108,8 @@ const updateWarehouse = async (
     if (!updatedWarehouse) throw new Error("Warehouse not found!");
     res.status(201).json({ data: updatedWarehouse });
   } catch (error) {
-    res.status(500).json({ message: error });
+    if (error instanceof Error)
+      res.status(500).json({ message: error.message });
   }
 };
 
@@ -122,7 +125,8 @@ const deleteWarehouse = async (
 
     res.status(201).json({ data: true, message: "Deletion was successful!" });
   } catch (error) {
-    res.status(500).json({ message: error });
+    if (error instanceof Error)
+      res.status(500).json({ message: error.message });
   }
 };
 

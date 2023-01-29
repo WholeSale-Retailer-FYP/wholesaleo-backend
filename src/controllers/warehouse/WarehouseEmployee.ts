@@ -25,7 +25,8 @@ const createWarehouseEmployee = async (
     });
     res.status(201).json({ data: warehouse });
   } catch (error) {
-    res.status(500).json({ message: error });
+    if (error instanceof Error)
+      res.status(500).json({ message: error.message });
   }
 };
 
@@ -37,12 +38,13 @@ const readWarehouseEmployee = async (
   try {
     const warehouseId = req.params.warehouseId;
     const warehouse = await WarehouseEmployee.findById(warehouseId);
-    if (warehouse) {
-      res.status(200).json({ data: warehouse });
+    if (!warehouse) {
+      throw new Error("WarehouseEmployee Not Found");
     }
-    throw new Error("WarehouseEmployee Not Found");
+    res.status(200).json({ data: warehouse });
   } catch (error) {
-    res.status(500).json({ message: error });
+    if (error instanceof Error)
+      res.status(500).json({ message: error.message });
   }
 };
 
@@ -55,7 +57,8 @@ const readAllWarehouseEmployee = async (
     const warehouses = await WarehouseEmployee.find();
     res.status(200).json({ data: warehouses });
   } catch (error) {
-    res.status(500).json({ message: error });
+    if (error instanceof Error)
+      res.status(500).json({ message: error.message });
   }
 };
 
@@ -98,7 +101,8 @@ const deleteWarehouseEmployee = async (
 
     res.status(201).json({ data: true, message: "Deletion was successful!" });
   } catch (error) {
-    res.status(500).json({ message: error });
+    if (error instanceof Error)
+      res.status(500).json({ message: error.message });
   }
 };
 

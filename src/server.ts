@@ -14,6 +14,10 @@ import warehouseRoutes from "./routes/warehouse/Warehouse";
 import warehouseEmployeeRoutes from "./routes/warehouse/WarehouseEmployee";
 import warehouseInventoryRoutes from "./routes/warehouse/WarehouseInventory";
 
+import retailerRoutes from "./routes/retailer/Retailer";
+import retailerEmployeeRoutes from "./routes/retailer/RetailerEmployee";
+import retailerInventoryRoutes from "./routes/retailer/RetailerInventory";
+
 const router = express();
 
 /** Connect to Mongo */
@@ -76,6 +80,10 @@ const StartServer = () => {
   router.use("/warehouse", warehouseRoutes);
   router.use("/warehouseEmployee", warehouseEmployeeRoutes);
   router.use("/warehouseInventory", warehouseInventoryRoutes);
+
+  router.use("/retailer", retailerRoutes);
+  router.use("/retailerEmployee", retailerEmployeeRoutes);
+  router.use("/retailerInventory", retailerInventoryRoutes);
 
   /** Healthcheck */
   router.get("/ping", (req, res, next) =>

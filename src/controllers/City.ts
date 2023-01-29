@@ -8,7 +8,8 @@ const createCity = async (req: Request, res: Response, next: NextFunction) => {
     const city = await City.create({ name, provinceId });
     res.status(201).json({ data: city });
   } catch (error) {
-    res.status(500).json({ message: error });
+    if (error instanceof Error)
+      res.status(500).json({ message: error.message });
   }
 };
 
@@ -21,7 +22,8 @@ const readCity = async (req: Request, res: Response, next: NextFunction) => {
     }
     throw new Error("City Not Found");
   } catch (error) {
-    res.status(500).json({ message: error });
+    if (error instanceof Error)
+      res.status(500).json({ message: error.message });
   }
 };
 
@@ -30,14 +32,14 @@ const readAllCity = async (req: Request, res: Response, next: NextFunction) => {
     const citys = await City.find().populate("provinceId", "name");
     res.status(200).json({ data: citys });
   } catch (error) {
-    res.status(500).json({ message: error });
+    if (error instanceof Error)
+      res.status(500).json({ message: error.message });
   }
 };
 
 const updateCity = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { _id, name, provinceId } = req.body;
-    console.log("first");
     const updatedCity = await City.updateOne(
       { _id },
       { name: name, provinceId: provinceId }
@@ -45,7 +47,8 @@ const updateCity = async (req: Request, res: Response, next: NextFunction) => {
     if (!updatedCity) throw new Error("City not found!");
     res.status(201).json({ data: updatedCity });
   } catch (error) {
-    res.status(500).json({ message: error });
+    if (error instanceof Error)
+      res.status(500).json({ message: error.message });
   }
 };
 
@@ -57,7 +60,8 @@ const deleteCity = async (req: Request, res: Response, next: NextFunction) => {
 
     res.status(201).json({ data: true, message: "Deletion was successful!" });
   } catch (error) {
-    res.status(500).json({ message: error });
+    if (error instanceof Error)
+      res.status(500).json({ message: error.message });
   }
 };
 
