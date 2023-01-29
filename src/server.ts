@@ -17,6 +17,10 @@ import warehouseInventoryRoutes from "./routes/warehouse/WarehouseInventory";
 import retailerRoutes from "./routes/retailer/Retailer";
 import retailerEmployeeRoutes from "./routes/retailer/RetailerEmployee";
 import retailerInventoryRoutes from "./routes/retailer/RetailerInventory";
+import retailerPOSRoutes from "./routes/retailer/RetailerPOS";
+import retailerSaleDataRoutes from "./routes/retailer/RetailerSaleData";
+import retailerPurchaseRoutes from "./routes/retailer/RetailerPurchase";
+import retailerPurchaseDataRoutes from "./routes/retailer/RetailerPurchaseData";
 
 const router = express();
 
@@ -84,6 +88,10 @@ const StartServer = () => {
   router.use("/retailer", retailerRoutes);
   router.use("/retailerEmployee", retailerEmployeeRoutes);
   router.use("/retailerInventory", retailerInventoryRoutes);
+  router.use("/retailerPOS", retailerPOSRoutes);
+  router.use("/retailerSaleData", retailerSaleDataRoutes);
+  router.use("/retailerPurchase", retailerPurchaseRoutes);
+  router.use("/retailerPurchaseData", retailerPurchaseDataRoutes);
 
   /** Healthcheck */
   router.get("/ping", (req, res, next) =>

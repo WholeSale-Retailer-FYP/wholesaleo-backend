@@ -6,7 +6,7 @@ const router = express.Router();
 router.post("/create", controller.createRetailerEmployee);
 router.get("/get/:retailerEmployeeId", controller.readRetailerEmployee);
 router.get("/get/", controller.readAllRetailerEmployee);
-router.get("/login/", controller.loginRetailerEmployee);
+router.post("/login/", controller.loginRetailerEmployee);
 router.put("/update/", controller.updateRetailerEmployee);
 router.delete("/delete/:retailerEmployeeId", controller.deleteRetailerEmployee);
 

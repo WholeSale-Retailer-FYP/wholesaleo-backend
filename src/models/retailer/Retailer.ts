@@ -1,5 +1,5 @@
 import mongoose, { Document, Schema } from "mongoose";
-
+// TODO: Account Payable implementation
 export interface IRetailer {
   firstName: string;
   lastName: string;
