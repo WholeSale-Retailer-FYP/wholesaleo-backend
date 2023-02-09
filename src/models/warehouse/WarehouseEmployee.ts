@@ -7,11 +7,10 @@ enum Roles {
 
 export interface IWarehouseEmployee {
   name: string;
-  cnic: number;
-  phoneNumber: number;
+  cnic: string;
+  phoneNumber: string;
   warehouseId: mongoose.Types.ObjectId;
   password: string;
-  //   TODO: test if enum works
   role: Roles;
 }
 
@@ -25,10 +24,15 @@ const WarehouseEmployeeSchema: Schema = new Schema(
       required: true,
       ref: "Warehouse",
     },
-    phoneNumber: { type: Number, required: true },
-    cnic: { type: Number, required: true },
+    phoneNumber: { type: String, required: true, unique: true },
+    cnic: { type: String, required: true, unique: true },
     password: { type: String, required: true },
-    role: { type: Roles, required: true },
+    role: {
+      type: Number,
+      enum: Roles,
+      default: Roles.Employee,
+      required: true,
+    },
   },
   {
     versionKey: false,
