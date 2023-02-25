@@ -1,6 +1,9 @@
 import mongoose, { Document, Schema } from "mongoose";
 import { v1 as uuidv1 } from "uuid";
 
+// TODO: Shouldnt this file be RetailerPurchaseData.ts?
+// and shouldnt we be using warehouseId ?
+
 export enum OrderStatus {
   PENDING = 0,
   DISPATCHED,

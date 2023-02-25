@@ -41,7 +41,10 @@ const readRetailerEmployee = async (
       retailerEmployeeId
     ).populate("retailerId", "shopName");
 
-    if (!retailer) throw new Error("RetailerEmployee Not Found");
+    if (!retailer) {
+      res.status(404).json({ message: "Retailer not Found" });
+      return;
+    }
 
     res.status(200).json({ data: retailer });
   } catch (error) {

@@ -4,14 +4,13 @@ enum Roles {
   Manager = 1,
   Employee,
 }
-
 export interface IWarehouseEmployee {
   name: string;
   cnic: string;
   phoneNumber: string;
-  warehouseId: mongoose.Types.ObjectId;
   password: string;
   role: Roles;
+  warehouseId: mongoose.Types.ObjectId;
 }
 
 export interface IWarehouseEmployeeModel extends IWarehouseEmployee, Document {}
