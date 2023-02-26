@@ -1,6 +1,6 @@
 import mongoose, { Document, Schema } from "mongoose";
 
-enum Roles {
+export enum Roles {
   Manager = 1,
   Employee,
 }

@@ -20,6 +20,7 @@ const createRetailer = async (
     cityId,
     regionId,
     warehouseId,
+    shopSize,
   } = req.body;
   try {
     const retailer = await Retailer.create({
@@ -35,6 +36,7 @@ const createRetailer = async (
       cityId,
       regionId,
       warehouseId,
+      shopSize,
     });
     res.status(201).json({ data: retailer });
   } catch (error) {
@@ -124,6 +126,7 @@ const updateRetailer = async (
       cityId,
       regionId,
       warehouseId,
+      shopSize,
     } = req.body;
     const updatedRetailer = await Retailer.updateOne(
       { _id },
@@ -140,6 +143,7 @@ const updateRetailer = async (
         cityId,
         regionId,
         warehouseId,
+        shopSize,
       }
     );
     if (!updatedRetailer) throw new Error("Retailer not found!");

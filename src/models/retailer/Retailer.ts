@@ -1,5 +1,13 @@
 import mongoose, { Document, Schema } from "mongoose";
 // TODO: Account Payable implementation
+
+enum ShopSize {
+  SINGLE = 0, //"1 Employee",
+  SMALL = 1, //"2-10 Employees",
+  MEDIUM = 2, //"11-50 Employees",
+  LARGE = 3, //"50+ Employees",
+}
+
 export interface IRetailer {
   firstName: string;
   lastName: string;
@@ -14,6 +22,7 @@ export interface IRetailer {
   cityId: mongoose.Types.ObjectId;
   regionId: mongoose.Types.ObjectId;
   warehouseId: mongoose.Types.ObjectId;
+  shopSize: ShopSize;
 }
 
 export interface IRetailerModel extends IRetailer, Document {}
@@ -36,6 +45,7 @@ const RetailerSchema: Schema = new Schema({
     ref: "Warehouse",
     required: true,
   },
+  shopSize: { type: Number, enum: ShopSize, required: true },
 });
 
 export default mongoose.model<IRetailerModel>("Retailer", RetailerSchema);

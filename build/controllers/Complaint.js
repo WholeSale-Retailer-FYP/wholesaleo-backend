@@ -18,6 +18,9 @@ const createComplaint = (req, res, next) => __awaiter(void 0, void 0, void 0, fu
     try {
         const complaint = yield Complaint_1.default.create({
             status,
+            description,
+            retailedId,
+            warehouseId,
         });
         res.status(201).json({ data: complaint });
     }

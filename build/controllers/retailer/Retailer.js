@@ -14,7 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const Retailer_1 = __importDefault(require("../../models/retailer/Retailer"));
 const createRetailer = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    const { firstName, lastName, cnic, phoneNumber, shopName, postalCode, latitude, longitude, provinceId, cityId, regionId, warehouseId, } = req.body;
+    const { firstName, lastName, cnic, phoneNumber, shopName, postalCode, latitude, longitude, provinceId, cityId, regionId, warehouseId, shopSize, } = req.body;
     try {
         const retailer = yield Retailer_1.default.create({
             firstName,
@@ -29,6 +29,7 @@ const createRetailer = (req, res, next) => __awaiter(void 0, void 0, void 0, fun
             cityId,
             regionId,
             warehouseId,
+            shopSize,
         });
         res.status(201).json({ data: retailer });
     }
@@ -86,7 +87,7 @@ const verifyRetailer = (req, res, next) => __awaiter(void 0, void 0, void 0, fun
 });
 const updateRetailer = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { _id, firstName, lastName, cnic, phoneNumber, shopName, postalCode, latitude, longitude, provinceId, cityId, regionId, warehouseId, } = req.body;
+        const { _id, firstName, lastName, cnic, phoneNumber, shopName, postalCode, latitude, longitude, provinceId, cityId, regionId, warehouseId, shopSize, } = req.body;
         const updatedRetailer = yield Retailer_1.default.updateOne({ _id }, {
             firstName,
             lastName,
@@ -100,6 +101,7 @@ const updateRetailer = (req, res, next) => __awaiter(void 0, void 0, void 0, fun
             cityId,
             regionId,
             warehouseId,
+            shopSize,
         });
         if (!updatedRetailer)
             throw new Error("Retailer not found!");

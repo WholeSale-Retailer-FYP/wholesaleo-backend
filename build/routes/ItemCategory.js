@@ -28,7 +28,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 const express_1 = __importDefault(require("express"));
 const ItemCategory_1 = __importDefault(require("../controllers/ItemCategory"));
 const cloudinaryConfig_1 = require("../config/cloudinaryConfig");
-const multerUploads = __importStar(require("../utils/multer"));
+const multerUploads = __importStar(require("../middleware/multer"));
 const router = express_1.default.Router();
 router.post("/create", cloudinaryConfig_1.cloudinaryConfig, multerUploads.multerUploads, ItemCategory_1.default.createItemCategory);
 router.get("/get/:itemCategoryId", ItemCategory_1.default.readItemCategory);

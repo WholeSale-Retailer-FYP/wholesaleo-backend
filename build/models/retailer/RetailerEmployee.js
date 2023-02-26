@@ -23,12 +23,13 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Roles = void 0;
 const mongoose_1 = __importStar(require("mongoose"));
 var Roles;
 (function (Roles) {
     Roles[Roles["Manager"] = 1] = "Manager";
     Roles[Roles["Employee"] = 2] = "Employee";
-})(Roles || (Roles = {}));
+})(Roles = exports.Roles || (exports.Roles = {}));
 const RetailerEmployeeSchema = new mongoose_1.Schema({
     firstName: { type: String, required: true },
     lastName: { type: String, required: true },

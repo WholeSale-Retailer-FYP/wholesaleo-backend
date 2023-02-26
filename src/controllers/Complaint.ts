@@ -1,7 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import mongoose from "mongoose";
 import Complaint from "../models/Complaint";
-import { UploadApiResponse, v2 as cloudinary } from "cloudinary";
 
 const createComplaint = async (
   req: Request,
@@ -12,6 +11,9 @@ const createComplaint = async (
   try {
     const complaint = await Complaint.create({
       status,
+      description,
+      retailedId,
+      warehouseId,
     });
     res.status(201).json({ data: complaint });
   } catch (error) {

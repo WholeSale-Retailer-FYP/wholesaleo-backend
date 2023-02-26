@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import mongoose from "mongoose";
+import jwt, { Secret, JwtPayload } from "jsonwebtoken";
 import RetailerEmployee from "../../models/retailer/RetailerEmployee";
 const bcrypt = require("bcrypt");
 
@@ -87,15 +87,22 @@ const loginRetailerEmployee = async (
 
     if (await bcrypt.compare(password, retailerEmployee.password)) {
       const { _id } = retailerEmployee;
+      const data = {
+        _id: retailerEmployee._id,
+        firstName: retailerEmployee.firstName,
+        lastName: retailerEmployee.lastName,
+        phoneNumber: retailerEmployee.phoneNumber,
+        role: retailerEmployee.role,
+        retailerId: retailerEmployee.retailerId,
+      };
+
+      const token = jwt.sign({ data }, process.env.SECRET_KEY as Secret, {
+        expiresIn: "20s",
+      });
+
       res.json({
-        data: {
-          _id: retailerEmployee._id,
-          firstName: retailerEmployee.firstName,
-          lastName: retailerEmployee.lastName,
-          phoneNumber: retailerEmployee.phoneNumber,
-          role: retailerEmployee.role,
-          retailerId: retailerEmployee.retailerId,
-        },
+        data,
+        token,
       });
     } else throw new Error("Incorrect Password entered");
   } catch (error) {

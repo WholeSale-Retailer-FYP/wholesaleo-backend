@@ -76,11 +76,24 @@ const readAllItem = (req, res, next) => __awaiter(void 0, void 0, void 0, functi
             res.status(500).json({ message: error.message });
     }
 });
-// todo: Handle image update. Delete previous image in Cloudinary andn then add new image to Cloudinary
+// todo: Handle image update. Delete previous image in Cloudinary andn test if edited image displaying properly
 const updateItem = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
+        if (!req.file)
+            res.status(500).json({ message: "No file present" });
+        let uploadedFile;
+        uploadedFile = yield cloudinary_1.v2.uploader.upload(req.file.path, {
+            folder: "items",
+            resource_type: "auto",
+            width: 350,
+            height: 350,
+        });
         const { _id, name, itemCategoryId } = req.body;
-        const updatedItem = yield Item_1.default.updateOne({ _id }, { name: name, itemCategoryId: itemCategoryId });
+        const updatedItem = yield Item_1.default.updateOne({ _id }, {
+            name: name,
+            itemCategoryId: itemCategoryId,
+            image: uploadedFile.secure_url,
+        });
         if (!updatedItem)
             throw new Error("Item not found!");
         res.status(201).json({ data: updatedItem });

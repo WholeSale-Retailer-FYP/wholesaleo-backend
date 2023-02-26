@@ -24,25 +24,14 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
-var Status;
-(function (Status) {
-    Status[Status["InProgress"] = 1] = "InProgress";
-    Status[Status["Urgent"] = 2] = "Urgent";
-    Status[Status["Complete"] = 3] = "Complete";
-})(Status || (Status = {}));
-const ComplaintSchema = new mongoose_1.Schema({
-    retailerId: { type: mongoose_1.Schema.Types.ObjectId, ref: "Retailer", required: true },
+const SectionSchema = new mongoose_1.Schema({
+    name: { type: String, required: true },
+    capacity: { type: Number, required: true },
+    currentQuantity: { type: Number, required: false, default: 0 },
     warehouseId: {
         type: mongoose_1.Schema.Types.ObjectId,
+        required: true,
         ref: "Warehouse",
-        required: true,
     },
-    status: {
-        type: Number,
-        enum: Status,
-        default: Status.InProgress,
-        required: true,
-    },
-    description: { type: String, required: true },
 });
-exports.default = mongoose_1.default.model("Complaint", ComplaintSchema);
+exports.default = mongoose_1.default.model("Section", SectionSchema);

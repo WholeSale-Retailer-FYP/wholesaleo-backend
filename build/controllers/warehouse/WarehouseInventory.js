@@ -14,7 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const WarehouseInventory_1 = __importDefault(require("../../models/warehouse/WarehouseInventory"));
 const createWarehouseInventory = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    const { quantity, weight, originalPrice, sellingPrice, barcodeId, warehouseId, itemId, } = req.body;
+    const { quantity, weight, originalPrice, sellingPrice, barcodeId, warehouseId, itemId, sectionId, } = req.body;
     try {
         const warehouse = yield WarehouseInventory_1.default.create({
             quantity,
@@ -24,6 +24,7 @@ const createWarehouseInventory = (req, res, next) => __awaiter(void 0, void 0, v
             barcodeId,
             warehouseId,
             itemId,
+            sectionId,
         });
         res.status(201).json({ data: warehouse });
     }
@@ -37,6 +38,7 @@ const readWarehouseInventory = (req, res, next) => __awaiter(void 0, void 0, voi
         const warehouse = yield WarehouseInventory_1.default.findById(warehouseInventoryId).populate([
             { path: "itemId", select: "name" },
             { path: "warehouseId", select: "name" },
+            { path: "sectionId", select: "name" },
         ]);
         if (warehouse) {
             res.status(200).json({ data: warehouse });
@@ -55,6 +57,7 @@ const readWarehouseInventoryOfWarehouse = (req, res, next) => __awaiter(void 0, 
         }).populate([
             { path: "itemId", select: "name" },
             { path: "warehouseId", select: "name" },
+            { path: "sectionId", select: "name" },
         ]);
         if (!warehouse) {
             throw new Error("WarehouseInventory Not Found");
@@ -70,6 +73,7 @@ const readAllWarehouseInventory = (req, res, next) => __awaiter(void 0, void 0, 
         const warehouses = yield WarehouseInventory_1.default.find().populate([
             { path: "itemId", select: "name" },
             { path: "warehouseId", select: "name" },
+            { path: "sectionId", select: "name" },
         ]);
         res.status(200).json({ data: warehouses });
     }
@@ -80,7 +84,7 @@ const readAllWarehouseInventory = (req, res, next) => __awaiter(void 0, void 0, 
 });
 const updateWarehouseInventory = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { _id, quantity, weight, originalPrice, sellingPrice, barcodeId, warehouseId, itemId, } = req.body;
+        const { _id, quantity, weight, originalPrice, sellingPrice, barcodeId, warehouseId, itemId, sectionId, } = req.body;
         const updatedWarehouseInventory = yield WarehouseInventory_1.default.updateOne({ _id }, {
             quantity: quantity,
             weight: weight,
@@ -89,6 +93,7 @@ const updateWarehouseInventory = (req, res, next) => __awaiter(void 0, void 0, v
             barcodeId: barcodeId,
             warehouseId: warehouseId,
             itemId: itemId,
+            sectionId: sectionId,
         });
         if (!updatedWarehouseInventory)
             throw new Error("WarehouseInventory not found!");

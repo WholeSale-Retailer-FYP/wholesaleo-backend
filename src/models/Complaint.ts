@@ -1,5 +1,4 @@
 import mongoose, { Document, Schema } from "mongoose";
-// TODO: add controller and route
 enum Status {
   InProgress = 1,
   Urgent,

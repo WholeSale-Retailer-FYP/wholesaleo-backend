@@ -24,6 +24,14 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
+// TODO: Account Payable implementation
+var ShopSize;
+(function (ShopSize) {
+    ShopSize[ShopSize["SINGLE"] = 0] = "SINGLE";
+    ShopSize[ShopSize["SMALL"] = 1] = "SMALL";
+    ShopSize[ShopSize["MEDIUM"] = 2] = "MEDIUM";
+    ShopSize[ShopSize["LARGE"] = 3] = "LARGE";
+})(ShopSize || (ShopSize = {}));
 const RetailerSchema = new mongoose_1.Schema({
     firstName: { type: String, required: true },
     lastName: { type: String, required: true },
@@ -42,5 +50,6 @@ const RetailerSchema = new mongoose_1.Schema({
         ref: "Warehouse",
         required: true,
     },
+    shopSize: { type: Number, enum: ShopSize, required: true },
 });
 exports.default = mongoose_1.default.model("Retailer", RetailerSchema);

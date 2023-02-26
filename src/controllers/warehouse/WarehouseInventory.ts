@@ -15,6 +15,7 @@ const createWarehouseInventory = async (
     barcodeId,
     warehouseId,
     itemId,
+    sectionId,
   } = req.body;
   try {
     const warehouse = await WarehouseInventory.create({
@@ -25,6 +26,7 @@ const createWarehouseInventory = async (
       barcodeId,
       warehouseId,
       itemId,
+      sectionId,
     });
     res.status(201).json({ data: warehouse });
   } catch (error) {
@@ -44,6 +46,7 @@ const readWarehouseInventory = async (
     ).populate([
       { path: "itemId", select: "name" },
       { path: "warehouseId", select: "name" },
+      { path: "sectionId", select: "name" },
     ]);
     if (warehouse) {
       res.status(200).json({ data: warehouse });
@@ -66,6 +69,7 @@ const readWarehouseInventoryOfWarehouse = async (
     }).populate([
       { path: "itemId", select: "name" },
       { path: "warehouseId", select: "name" },
+      { path: "sectionId", select: "name" },
     ]);
 
     if (!warehouse) {
@@ -86,6 +90,7 @@ const readAllWarehouseInventory = async (
     const warehouses = await WarehouseInventory.find().populate([
       { path: "itemId", select: "name" },
       { path: "warehouseId", select: "name" },
+      { path: "sectionId", select: "name" },
     ]);
     res.status(200).json({ data: warehouses });
   } catch (error) {
@@ -109,6 +114,7 @@ const updateWarehouseInventory = async (
       barcodeId,
       warehouseId,
       itemId,
+      sectionId,
     } = req.body;
     const updatedWarehouseInventory = await WarehouseInventory.updateOne(
       { _id },
@@ -120,6 +126,7 @@ const updateWarehouseInventory = async (
         barcodeId: barcodeId,
         warehouseId: warehouseId,
         itemId: itemId,
+        sectionId: sectionId,
       }
     );
     if (!updatedWarehouseInventory)

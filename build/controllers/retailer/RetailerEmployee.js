@@ -12,6 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const RetailerEmployee_1 = __importDefault(require("../../models/retailer/RetailerEmployee"));
 const bcrypt = require("bcrypt");
 const createRetailerEmployee = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
@@ -68,15 +69,20 @@ const loginRetailerEmployee = (req, res, next) => __awaiter(void 0, void 0, void
             throw new Error("Retailer not found! Incorrect CNIC");
         if (yield bcrypt.compare(password, retailerEmployee.password)) {
             const { _id } = retailerEmployee;
+            const data = {
+                _id: retailerEmployee._id,
+                firstName: retailerEmployee.firstName,
+                lastName: retailerEmployee.lastName,
+                phoneNumber: retailerEmployee.phoneNumber,
+                role: retailerEmployee.role,
+                retailerId: retailerEmployee.retailerId,
+            };
+            const token = jsonwebtoken_1.default.sign({ data }, process.env.SECRET_KEY, {
+                expiresIn: "20s",
+            });
             res.json({
-                data: {
-                    _id: retailerEmployee._id,
-                    firstName: retailerEmployee.firstName,
-                    lastName: retailerEmployee.lastName,
-                    phoneNumber: retailerEmployee.phoneNumber,
-                    role: retailerEmployee.role,
-                    retailerId: retailerEmployee.retailerId,
-                },
+                data,
+                token,
             });
         }
         else

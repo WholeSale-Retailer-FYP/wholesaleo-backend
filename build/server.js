@@ -14,9 +14,11 @@ const Region_1 = __importDefault(require("./routes/Region"));
 const ItemCategory_1 = __importDefault(require("./routes/ItemCategory"));
 const Item_1 = __importDefault(require("./routes/Item"));
 const Complaint_1 = __importDefault(require("./routes/Complaint"));
+const RetailerCategory_1 = __importDefault(require("./routes/RetailerCategory"));
 const Warehouse_1 = __importDefault(require("./routes/warehouse/Warehouse"));
 const WarehouseEmployee_1 = __importDefault(require("./routes/warehouse/WarehouseEmployee"));
 const WarehouseInventory_1 = __importDefault(require("./routes/warehouse/WarehouseInventory"));
+const Section_1 = __importDefault(require("./routes/warehouse/Section"));
 const Retailer_1 = __importDefault(require("./routes/retailer/Retailer"));
 const RetailerEmployee_1 = __importDefault(require("./routes/retailer/RetailerEmployee"));
 const RetailerInventory_1 = __importDefault(require("./routes/retailer/RetailerInventory"));
@@ -24,6 +26,7 @@ const RetailerPOS_1 = __importDefault(require("./routes/retailer/RetailerPOS"));
 const RetailerSaleData_1 = __importDefault(require("./routes/retailer/RetailerSaleData"));
 const RetailerPurchase_1 = __importDefault(require("./routes/retailer/RetailerPurchase"));
 const RetailerPurchaseData_1 = __importDefault(require("./routes/retailer/RetailerPurchaseData"));
+const RetailerFavorites_1 = __importDefault(require("./routes/retailer/RetailerFavorites"));
 const router = (0, express_1.default)();
 /** Connect to Mongo */
 mongoose_1.default
@@ -64,9 +67,11 @@ const StartServer = () => {
     router.use("/itemCategory", ItemCategory_1.default);
     router.use("/item", Item_1.default);
     router.use("/complaint", Complaint_1.default);
+    router.use("/retailerCategory", RetailerCategory_1.default);
     router.use("/warehouse", Warehouse_1.default);
     router.use("/warehouseEmployee", WarehouseEmployee_1.default);
     router.use("/warehouseInventory", WarehouseInventory_1.default);
+    router.use("/section", Section_1.default);
     router.use("/retailer", Retailer_1.default);
     router.use("/retailerEmployee", RetailerEmployee_1.default);
     router.use("/retailerInventory", RetailerInventory_1.default);
@@ -74,11 +79,12 @@ const StartServer = () => {
     router.use("/retailerSaleData", RetailerSaleData_1.default);
     router.use("/retailerPurchase", RetailerPurchase_1.default);
     router.use("/retailerPurchaseData", RetailerPurchaseData_1.default);
+    router.use("/retailerFavorites", RetailerFavorites_1.default);
     /** Healthcheck */
     router.get("/ping", (req, res, next) => res.status(200).json({ hello: "world" }));
     /** Error handling */
     router.use((req, res, next) => {
-        const error = new Error("Not found");
+        const error = new Error("Route Not found");
         Logging_1.default.error(error);
         res.status(404).json({
             message: error.message,

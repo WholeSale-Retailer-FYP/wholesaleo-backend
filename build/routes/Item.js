@@ -27,13 +27,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 const express_1 = __importDefault(require("express"));
 const cloudinaryConfig_1 = require("../config/cloudinaryConfig");
-const multerUploads = __importStar(require("../utils/multer"));
+const multerUploads = __importStar(require("../middleware/multer"));
 const Item_1 = __importDefault(require("../controllers/Item"));
 const router = express_1.default.Router();
 router.post("/create", cloudinaryConfig_1.cloudinaryConfig, multerUploads.multerUploads, Item_1.default.createItem);
 router.get("/get/:itemId", Item_1.default.readItem);
 router.get("/get/category/:itemCategoryId", Item_1.default.readItemOfCategory);
 router.get("/get/", Item_1.default.readAllItem);
-router.put("/update/", Item_1.default.updateItem);
+router.put("/update/", cloudinaryConfig_1.cloudinaryConfig, multerUploads.multerUploads, Item_1.default.updateItem);
 router.delete("/delete/:itemId", Item_1.default.deleteItem);
 module.exports = router;
