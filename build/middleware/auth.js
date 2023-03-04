@@ -14,7 +14,6 @@ const auth = (roles) => {
             if (!token)
                 throw new Error("No JWT token found");
             const decoded = jsonwebtoken_1.default.verify(token, exports.SECRET_KEY, function (err, decoded) {
-                console.log("first");
                 if (err)
                     throw new Error("Invalid JWT token");
                 else

@@ -8,10 +8,6 @@ const createRetailer = async (
   next: NextFunction
 ) => {
   const {
-    firstName,
-    lastName,
-    cnic,
-    phoneNumber,
     shopName,
     postalCode,
     latitude,
@@ -20,22 +16,18 @@ const createRetailer = async (
     cityId,
     regionId,
     warehouseId,
+    amountPayable,
     shopSize,
   } = req.body;
   try {
     const retailer = await Retailer.create({
-      firstName,
-      lastName,
-      cnic,
-      phoneNumber,
       shopName,
       postalCode,
       latitude,
       longitude,
-      provinceId,
-      cityId,
       regionId,
       warehouseId,
+      amountPayable,
       shopSize,
     });
     res.status(201).json({ data: retailer });
@@ -52,11 +44,7 @@ const readRetailer = async (
 ) => {
   try {
     const retailerId = req.params.retailerId;
-    const retailer = await Retailer.findById(retailerId).populate([
-      "cityId",
-      "regionId",
-      "provinceId",
-    ]);
+    const retailer = await Retailer.findById(retailerId).populate(["regionId"]);
     if (!retailer) {
       throw new Error("Retailer Not Found");
     }
@@ -73,11 +61,7 @@ const readAllRetailer = async (
   next: NextFunction
 ) => {
   try {
-    const retailers = await Retailer.find().populate([
-      "cityId",
-      "regionId",
-      "provinceId",
-    ]);
+    const retailers = await Retailer.find().populate(["regionId"]);
     res.status(200).json({ data: retailers });
   } catch (error) {
     if (error instanceof Error)
@@ -114,35 +98,25 @@ const updateRetailer = async (
   try {
     const {
       _id,
-      firstName,
-      lastName,
-      cnic,
-      phoneNumber,
       shopName,
       postalCode,
       latitude,
       longitude,
-      provinceId,
-      cityId,
       regionId,
       warehouseId,
+      amountPayable,
       shopSize,
     } = req.body;
     const updatedRetailer = await Retailer.updateOne(
       { _id },
       {
-        firstName,
-        lastName,
-        cnic,
-        phoneNumber,
         shopName,
         postalCode,
         latitude,
         longitude,
-        provinceId,
-        cityId,
         regionId,
         warehouseId,
+        amountPayable,
         shopSize,
       }
     );

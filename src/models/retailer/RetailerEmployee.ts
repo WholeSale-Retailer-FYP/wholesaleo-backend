@@ -1,7 +1,8 @@
 import mongoose, { Document, Schema } from "mongoose";
 
 export enum Roles {
-  Manager = 1,
+  Owner = 0,
+  Manager,
   Employee,
 }
 

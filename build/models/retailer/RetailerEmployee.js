@@ -27,6 +27,7 @@ exports.Roles = void 0;
 const mongoose_1 = __importStar(require("mongoose"));
 var Roles;
 (function (Roles) {
+    Roles[Roles["Owner"] = 0] = "Owner";
     Roles[Roles["Manager"] = 1] = "Manager";
     Roles[Roles["Employee"] = 2] = "Employee";
 })(Roles = exports.Roles || (exports.Roles = {}));

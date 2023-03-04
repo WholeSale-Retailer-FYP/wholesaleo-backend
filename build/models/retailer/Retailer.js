@@ -24,7 +24,6 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
-// TODO: Account Payable implementation
 var ShopSize;
 (function (ShopSize) {
     ShopSize[ShopSize["SINGLE"] = 0] = "SINGLE";
