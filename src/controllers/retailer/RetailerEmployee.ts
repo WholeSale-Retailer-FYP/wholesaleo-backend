@@ -96,9 +96,10 @@ const loginRetailerEmployee = async (
         retailerId: retailerEmployee.retailerId,
       };
 
-      const token = jwt.sign({ data }, process.env.SECRET_KEY as Secret, {
-        expiresIn: "20s",
-      });
+      // const token = jwt.sign({ data }, process.env.SECRET_KEY as Secret, {
+      //   expiresIn: "20s",
+      // });
+      const token = jwt.sign({ data }, process.env.SECRET_KEY as Secret);
 
       res.json({
         data,

@@ -12,8 +12,6 @@ const createRetailer = async (
     postalCode,
     latitude,
     longitude,
-    provinceId,
-    cityId,
     regionId,
     warehouseId,
     amountPayable,

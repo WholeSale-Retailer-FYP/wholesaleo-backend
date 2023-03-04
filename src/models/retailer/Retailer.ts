@@ -7,7 +7,7 @@ enum ShopSize {
   LARGE = 3, //"50+ Employees",
 }
 
-// TODO: Remove provinceId, cityId -  and only use populate- remove personal details
+
 export interface IRetailer {
   shopName: boolean;
   postalCode: number;
