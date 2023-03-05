@@ -58,6 +58,22 @@ const readAllRegion = (req, res, next) => __awaiter(void 0, void 0, void 0, func
             res.status(500).json({ message: error.message });
     }
 });
+const getAllRegionsOfCity = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const cityId = req.params.cityId;
+        const regions = yield Region_1.default.find({ cityId: cityId }).populate({
+            path: "cityId",
+            populate: {
+                path: "provinceId",
+            },
+        });
+        res.status(200).json({ data: regions });
+    }
+    catch (error) {
+        if (error instanceof Error)
+            res.status(500).json({ message: error.message });
+    }
+});
 const updateRegion = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { _id, name, cityId } = req.body;
@@ -88,6 +104,7 @@ exports.default = {
     createRegion,
     readAllRegion,
     readRegion,
+    getAllRegionsOfCity,
     updateRegion,
     deleteRegion,
 };

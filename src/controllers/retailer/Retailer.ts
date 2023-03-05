@@ -12,6 +12,7 @@ const createRetailer = async (
     postalCode,
     latitude,
     longitude,
+    address,
     regionId,
     warehouseId,
     amountPayable,
@@ -23,6 +24,7 @@ const createRetailer = async (
       postalCode,
       latitude,
       longitude,
+      address,
       regionId,
       warehouseId,
       amountPayable,
@@ -33,6 +35,15 @@ const createRetailer = async (
     if (error instanceof Error)
       res.status(500).json({ message: error.message });
   }
+};
+
+const createRetailerAndAdmin = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  console.log(req.body);
+  res.status(200).json({ data: "received" });
 };
 
 const readRetailer = async (
@@ -99,6 +110,7 @@ const updateRetailer = async (
       shopName,
       postalCode,
       latitude,
+      address,
       longitude,
       regionId,
       warehouseId,
@@ -111,6 +123,7 @@ const updateRetailer = async (
         shopName,
         postalCode,
         latitude,
+        address,
         longitude,
         regionId,
         warehouseId,
@@ -145,6 +158,7 @@ const deleteRetailer = async (
 
 export default {
   createRetailer,
+  createRetailerAndAdmin,
   readAllRetailer,
   readRetailer,
   verifyRetailer,

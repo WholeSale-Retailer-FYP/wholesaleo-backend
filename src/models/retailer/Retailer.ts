@@ -7,13 +7,13 @@ enum ShopSize {
   LARGE = 3, //"50+ Employees",
 }
 
-
 export interface IRetailer {
   shopName: boolean;
   postalCode: number;
   longitude: number;
   latitude: number;
   verified: boolean;
+  address: string;
 
   regionId: mongoose.Types.ObjectId;
   warehouseId: mongoose.Types.ObjectId;
@@ -29,6 +29,7 @@ const RetailerSchema: Schema = new Schema({
   longitude: { type: Number, required: true },
   latitude: { type: Number, required: true },
   verified: { type: Boolean, default: false },
+  address: { type: String, required: true },
   regionId: { type: Schema.Types.ObjectId, ref: "Region", required: true },
   warehouseId: {
     type: Schema.Types.ObjectId,

@@ -77,9 +77,10 @@ const loginRetailerEmployee = (req, res, next) => __awaiter(void 0, void 0, void
                 role: retailerEmployee.role,
                 retailerId: retailerEmployee.retailerId,
             };
-            const token = jsonwebtoken_1.default.sign({ data }, process.env.SECRET_KEY, {
-                expiresIn: "20s",
-            });
+            // const token = jwt.sign({ data }, process.env.SECRET_KEY as Secret, {
+            //   expiresIn: "20s",
+            // });
+            const token = jsonwebtoken_1.default.sign({ data }, process.env.SECRET_KEY);
             res.json({
                 data,
                 token,

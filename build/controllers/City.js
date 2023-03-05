@@ -48,6 +48,17 @@ const readAllCity = (req, res, next) => __awaiter(void 0, void 0, void 0, functi
             res.status(500).json({ message: error.message });
     }
 });
+const getAllCitiesOfProvince = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const provinceId = req.params.provinceId;
+        const cities = yield City_1.default.find({ provinceId: provinceId });
+        res.status(200).json({ data: cities });
+    }
+    catch (error) {
+        if (error instanceof Error)
+            res.status(500).json({ message: error.message });
+    }
+});
 const updateCity = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { _id, name, provinceId } = req.body;
@@ -78,6 +89,7 @@ exports.default = {
     createCity,
     readAllCity,
     readCity,
+    getAllCitiesOfProvince,
     updateCity,
     deleteCity,
 };

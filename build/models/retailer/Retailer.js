@@ -32,17 +32,11 @@ var ShopSize;
     ShopSize[ShopSize["LARGE"] = 3] = "LARGE";
 })(ShopSize || (ShopSize = {}));
 const RetailerSchema = new mongoose_1.Schema({
-    firstName: { type: String, required: true },
-    lastName: { type: String, required: true },
-    cnic: { type: String, required: true, unique: true },
-    phoneNumber: { type: String, required: true, unique: true },
     shopName: { type: String, required: true },
     postalCode: { type: Number, required: true },
     longitude: { type: Number, required: true },
     latitude: { type: Number, required: true },
     verified: { type: Boolean, default: false },
-    provinceId: { type: mongoose_1.Schema.Types.ObjectId, ref: "Province", required: true },
-    cityId: { type: mongoose_1.Schema.Types.ObjectId, ref: "City", required: true },
     regionId: { type: mongoose_1.Schema.Types.ObjectId, ref: "Region", required: true },
     warehouseId: {
         type: mongoose_1.Schema.Types.ObjectId,

@@ -55,6 +55,26 @@ const readAllRegion = async (
   }
 };
 
+const getAllRegionsOfCity = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const cityId = req.params.cityId;
+    const regions = await Region.find({ cityId: cityId }).populate({
+      path: "cityId",
+      populate: {
+        path: "provinceId",
+      },
+    });
+    res.status(200).json({ data: regions });
+  } catch (error) {
+    if (error instanceof Error)
+      res.status(500).json({ message: error.message });
+  }
+};
+
 const updateRegion = async (
   req: Request,
   res: Response,
@@ -95,6 +115,7 @@ export default {
   createRegion,
   readAllRegion,
   readRegion,
+  getAllRegionsOfCity,
   updateRegion,
   deleteRegion,
 };
