@@ -8,7 +8,11 @@ const router = express.Router();
 
 router.post("/createShop", controller.createRetailer);
 router.post("/create", controller.createRetailerAndAdmin);
-router.get("/get/:retailerId", controller.readRetailer);
+router.get(
+  "/get/:retailerId",
+  auth([Roles.Manager, Roles.Employee]),
+  controller.readRetailer
+);
 router.get("/get/", controller.readAllRetailer);
 router.put("/update/verify", controller.verifyRetailer);
 router.put("/update/", controller.updateRetailer);

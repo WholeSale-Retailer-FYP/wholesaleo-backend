@@ -1,6 +1,11 @@
 import { NextFunction, Request, Response } from "express";
 import mongoose from "mongoose";
 import Retailer from "../../models/retailer/Retailer";
+import RetailerEmployee, {
+  Roles,
+} from "../../models/retailer/RetailerEmployee";
+const bcrypt = require("bcrypt");
+
 
 const createRetailer = async (
   req: Request,
@@ -42,8 +47,53 @@ const createRetailerAndAdmin = async (
   res: Response,
   next: NextFunction
 ) => {
-  console.log(req.body);
-  res.status(200).json({ data: "received" });
+  const {
+    shopName,
+    postalCode,
+    latitude,
+    longitude,
+    address,
+    regionId,
+    warehouseId,
+    shopSize,
+
+    firstName,
+    lastName,
+    cnic,
+    password,
+    phoneNumber,
+  } = req.body;
+  try {
+    const retailer = await Retailer.create({
+      shopName,
+      postalCode,
+      latitude,
+      longitude,
+      address,
+      regionId,
+      warehouseId,
+      shopSize,
+    });
+    if (retailer) {
+      const retailerId = retailer._id;
+      const salt = await bcrypt.genSalt();
+      const hashedPassword = await bcrypt.hash(password, salt);
+      const retailerAdmin = await RetailerEmployee.create({
+        firstName,
+        lastName,
+        cnic,
+        phoneNumber,
+        role: Roles.Owner,
+        password: hashedPassword,
+        retailerId,
+      });
+      if (!retailerAdmin) throw new Error("Retailer Admin not created!");
+      res.status(201).json({ data: retailer });
+    }
+  } catch (error) {
+    if (error instanceof Error)
+      res.status(500).json({ message: error.message });
+  }
 };
 
 const readRetailer = async (

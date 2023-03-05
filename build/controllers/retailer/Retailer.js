@@ -1,4 +1,27 @@
 "use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -13,20 +36,59 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const Retailer_1 = __importDefault(require("../../models/retailer/Retailer"));
+const RetailerEmployee_1 = __importStar(require("../../models/retailer/RetailerEmployee"));
+const bcrypt = require("bcrypt");
 const createRetailer = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    const { shopName, postalCode, latitude, longitude, regionId, warehouseId, amountPayable, shopSize, } = req.body;
+    const { shopName, postalCode, latitude, longitude, address, regionId, warehouseId, amountPayable, shopSize, } = req.body;
     try {
         const retailer = yield Retailer_1.default.create({
             shopName,
             postalCode,
             latitude,
             longitude,
+            address,
             regionId,
             warehouseId,
             amountPayable,
             shopSize,
         });
         res.status(201).json({ data: retailer });
+    }
+    catch (error) {
+        if (error instanceof Error)
+            res.status(500).json({ message: error.message });
+    }
+});
+const createRetailerAndAdmin = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const { shopName, postalCode, latitude, longitude, address, regionId, warehouseId, shopSize, firstName, lastName, cnic, password, phoneNumber, } = req.body;
+    try {
+        const retailer = yield Retailer_1.default.create({
+            shopName,
+            postalCode,
+            latitude,
+            longitude,
+            address,
+            regionId,
+            warehouseId,
+            shopSize,
+        });
+        if (retailer) {
+            const retailerId = retailer._id;
+            const salt = yield bcrypt.genSalt();
+            const hashedPassword = yield bcrypt.hash(password, salt);
+            const retailerAdmin = yield RetailerEmployee_1.default.create({
+                firstName,
+                lastName,
+                cnic,
+                phoneNumber,
+                role: RetailerEmployee_1.Roles.Owner,
+                password: hashedPassword,
+                retailerId,
+            });
+            if (!retailerAdmin)
+                throw new Error("Retailer Admin not created!");
+            res.status(201).json({ data: retailer });
+        }
     }
     catch (error) {
         if (error instanceof Error)
@@ -74,11 +136,12 @@ const verifyRetailer = (req, res, next) => __awaiter(void 0, void 0, void 0, fun
 });
 const updateRetailer = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { _id, shopName, postalCode, latitude, longitude, regionId, warehouseId, amountPayable, shopSize, } = req.body;
+        const { _id, shopName, postalCode, latitude, address, longitude, regionId, warehouseId, amountPayable, shopSize, } = req.body;
         const updatedRetailer = yield Retailer_1.default.updateOne({ _id }, {
             shopName,
             postalCode,
             latitude,
+            address,
             longitude,
             regionId,
             warehouseId,
@@ -109,6 +172,7 @@ const deleteRetailer = (req, res, next) => __awaiter(void 0, void 0, void 0, fun
 });
 exports.default = {
     createRetailer,
+    createRetailerAndAdmin,
     readAllRetailer,
     readRetailer,
     verifyRetailer,

@@ -37,6 +37,8 @@ const RetailerSchema = new mongoose_1.Schema({
     longitude: { type: Number, required: true },
     latitude: { type: Number, required: true },
     verified: { type: Boolean, default: false },
+    address: { type: String, required: true },
+    amountPayable: { type: Number, default: 0 },
     regionId: { type: mongoose_1.Schema.Types.ObjectId, ref: "Region", required: true },
     warehouseId: {
         type: mongoose_1.Schema.Types.ObjectId,

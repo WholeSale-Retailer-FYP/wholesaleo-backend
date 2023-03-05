@@ -30,6 +30,7 @@ const RetailerSchema: Schema = new Schema({
   latitude: { type: Number, required: true },
   verified: { type: Boolean, default: false },
   address: { type: String, required: true },
+  amountPayable: { type: Number, default: 0 },
   regionId: { type: Schema.Types.ObjectId, ref: "Region", required: true },
   warehouseId: {
     type: Schema.Types.ObjectId,
