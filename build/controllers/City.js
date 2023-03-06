@@ -27,7 +27,7 @@ const createCity = (req, res, next) => __awaiter(void 0, void 0, void 0, functio
 const readCity = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const cityId = req.params.cityId;
-        const city = yield City_1.default.findById(cityId).populate("provinceId", "name");
+        const city = yield City_1.default.findById(cityId).populate("name");
         if (city) {
             res.status(200).json({ data: city });
         }

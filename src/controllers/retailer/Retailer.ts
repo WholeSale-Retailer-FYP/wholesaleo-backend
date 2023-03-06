@@ -6,7 +6,6 @@ import RetailerEmployee, {
 } from "../../models/retailer/RetailerEmployee";
 const bcrypt = require("bcrypt");
 
-
 const createRetailer = async (
   req: Request,
   res: Response,
@@ -63,34 +62,53 @@ const createRetailerAndAdmin = async (
     password,
     phoneNumber,
   } = req.body;
+  const session = await Retailer.startSession();
   try {
-    const retailer = await Retailer.create({
-      shopName,
-      postalCode,
-      latitude,
-      longitude,
-      address,
-      regionId,
-      warehouseId,
-      shopSize,
-    });
+    session.startTransaction();
+    const retailerId = new mongoose.Types.ObjectId();
+    const retailer = await Retailer.create(
+      [
+        {
+          _id: retailerId,
+          shopName,
+          postalCode,
+          latitude,
+          longitude,
+          address,
+          regionId,
+          warehouseId,
+          shopSize,
+        },
+      ],
+      { session }
+    );
     if (retailer) {
-      const retailerId = retailer._id;
       const salt = await bcrypt.genSalt();
       const hashedPassword = await bcrypt.hash(password, salt);
-      const retailerAdmin = await RetailerEmployee.create({
-        firstName,
-        lastName,
-        cnic,
-        phoneNumber,
-        role: Roles.Owner,
-        password: hashedPassword,
-        retailerId,
-      });
-      if (!retailerAdmin) throw new Error("Retailer Admin not created!");
+      const retailerAdmin = await RetailerEmployee.create(
+        [
+          {
+            firstName,
+            lastName,
+            cnic,
+            phoneNumber,
+            role: Roles.Owner,
+            password: hashedPassword,
+            retailerId,
+          },
+        ],
+        { session }
+      );
+      if (!retailerAdmin) {
+        throw new Error("Retailer Admin not created!");
+      }
+      await session.commitTransaction();
       res.status(201).json({ data: retailer });
+      session.endSession();
     }
   } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
     if (error instanceof Error)
       res.status(500).json({ message: error.message });
   }

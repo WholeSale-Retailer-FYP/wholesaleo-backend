@@ -21,9 +21,8 @@ export interface IRetailer {
   shopSize: ShopSize;
 }
 
-export interface IRetailerModel extends IRetailer, Document {}
-
 const RetailerSchema: Schema = new Schema({
+  _id: { type: Schema.Types.ObjectId, auto: true },
   shopName: { type: String, required: true },
   postalCode: { type: Number, required: true },
   longitude: { type: Number, required: true },
@@ -40,4 +39,4 @@ const RetailerSchema: Schema = new Schema({
   shopSize: { type: Number, enum: ShopSize, required: true },
 });
 
-export default mongoose.model<IRetailerModel>("Retailer", RetailerSchema);
+export default mongoose.model<IRetailer>("Retailer", RetailerSchema);

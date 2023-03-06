@@ -37,7 +37,11 @@ const readAllCity = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
-const getAllCitiesOfProvince = async ( req: Request, res: Response, next: NextFunction ) => {
+const getAllCitiesOfProvince = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const provinceId = req.params.provinceId;
     const cities = await City.find({ provinceId: provinceId });
@@ -46,7 +50,7 @@ const getAllCitiesOfProvince = async ( req: Request, res: Response, next: NextFu
     if (error instanceof Error)
       res.status(500).json({ message: error.message });
   }
-}
+};
 
 const updateCity = async (req: Request, res: Response, next: NextFunction) => {
   try {
