@@ -35,6 +35,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const mongoose_1 = __importDefault(require("mongoose"));
 const Retailer_1 = __importDefault(require("../../models/retailer/Retailer"));
 const RetailerEmployee_1 = __importStar(require("../../models/retailer/RetailerEmployee"));
 const bcrypt = require("bcrypt");
@@ -61,36 +62,48 @@ const createRetailer = (req, res, next) => __awaiter(void 0, void 0, void 0, fun
 });
 const createRetailerAndAdmin = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const { shopName, postalCode, latitude, longitude, address, regionId, warehouseId, shopSize, firstName, lastName, cnic, password, phoneNumber, } = req.body;
+    const session = yield Retailer_1.default.startSession();
     try {
-        const retailer = yield Retailer_1.default.create({
-            shopName,
-            postalCode,
-            latitude,
-            longitude,
-            address,
-            regionId,
-            warehouseId,
-            shopSize,
-        });
+        session.startTransaction();
+        const retailerId = new mongoose_1.default.Types.ObjectId();
+        const retailer = yield Retailer_1.default.create([
+            {
+                _id: retailerId,
+                shopName,
+                postalCode,
+                latitude,
+                longitude,
+                address,
+                regionId,
+                warehouseId,
+                shopSize,
+            },
+        ], { session });
         if (retailer) {
-            const retailerId = retailer._id;
             const salt = yield bcrypt.genSalt();
             const hashedPassword = yield bcrypt.hash(password, salt);
-            const retailerAdmin = yield RetailerEmployee_1.default.create({
-                firstName,
-                lastName,
-                cnic,
-                phoneNumber,
-                role: RetailerEmployee_1.Roles.Owner,
-                password: hashedPassword,
-                retailerId,
-            });
-            if (!retailerAdmin)
+            const retailerAdmin = yield RetailerEmployee_1.default.create([
+                {
+                    firstName,
+                    lastName,
+                    cnic,
+                    phoneNumber,
+                    role: RetailerEmployee_1.Roles.Owner,
+                    password: hashedPassword,
+                    retailerId,
+                },
+            ], { session });
+            if (!retailerAdmin) {
                 throw new Error("Retailer Admin not created!");
+            }
+            yield session.commitTransaction();
             res.status(201).json({ data: retailer });
+            session.endSession();
         }
     }
     catch (error) {
+        yield session.abortTransaction();
+        session.endSession();
         if (error instanceof Error)
             res.status(500).json({ message: error.message });
     }

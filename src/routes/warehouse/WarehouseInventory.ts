@@ -4,12 +4,13 @@ import controller from "../../controllers/warehouse/WarehouseInventory";
 const router = express.Router();
 
 router.post("/create", controller.createWarehouseInventory);
-router.get("/get/:warehouseInventoryId", controller.readWarehouseInventory);
-router.get(
-  "/get/warehouse/:warehouseId",
-  controller.readWarehouseInventoryOfWarehouse
-);
 router.get("/get/", controller.readAllWarehouseInventory);
+router.get("/get/:warehouseInventoryId", controller.readWarehouseInventory);
+router.get("/get/warehouse/:warehouseId", controller.readInventoryOfWarehouse);
+router.get(
+  "/get/ofCategory/:itemCategoryId/:warehouseId",
+  controller.readWarehouseItemOfCategory
+);
 router.put("/update/", controller.updateWarehouseInventory);
 router.delete(
   "/delete/:warehouseInventoryId",

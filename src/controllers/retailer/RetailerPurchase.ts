@@ -1,14 +1,25 @@
 import { NextFunction, Request, Response } from "express";
 import mongoose from "mongoose";
 import RetailerPurchase from "../../models/retailer/RetailerPurchase";
+import RetailerPurchaseData from "../../models/retailer/RetailerPurchaseData";
+import WarehouseInventory from "../../models/warehouse/WarehouseInventory";
+import { OrderStatus } from "../../models/retailer/RetailerPurchase";
 
+// When Retailer buys goods from mobile app
+
+// reduce quantity from warehouse inventory (warehouseInventoryId)
+// add quantity to retailer inventory (retailerInventoryId)
+// add retailer purchase
+// add retailer purchase data
+// set amount payable
 const createRetailerPurchase = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
-  const { retailerId } = req.body;
+  const { retailerId, warehouseInventoryId, warehouseId, items } = req.body;
   try {
+    const date = new Date();
     const retailerPurchase = await RetailerPurchase.create({
       retailerId,
     });

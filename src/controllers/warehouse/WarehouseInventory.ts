@@ -48,16 +48,16 @@ const readWarehouseInventory = async (
       { path: "warehouseId", select: "name" },
       { path: "sectionId", select: "name" },
     ]);
-    if (warehouse) {
-      res.status(200).json({ data: warehouse });
+    if (!warehouse) {
+      throw new Error("WarehouseInventory Not Found");
     }
-    throw new Error("WarehouseInventory Not Found");
+    res.status(200).json({ data: warehouse });
   } catch (error) {
     res.status(500).json({ message: error });
   }
 };
 
-const readWarehouseInventoryOfWarehouse = async (
+const readInventoryOfWarehouse = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -75,9 +75,40 @@ const readWarehouseInventoryOfWarehouse = async (
     if (!warehouse) {
       throw new Error("WarehouseInventory Not Found");
     }
+
     res.status(200).json({ data: warehouse });
   } catch (error) {
     res.status(500).json({ message: error });
+  }
+};
+
+const readWarehouseItemOfCategory = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const warehouseId = req.params.warehouseId;
+    const itemCategoryId = req.params.itemCategoryId;
+    let warehouseInventory = await WarehouseInventory.find({
+      warehouseId,
+    }).populate([
+      { path: "itemId" },
+      { path: "warehouseId", select: "name" },
+      { path: "sectionId", select: "name" },
+    ]);
+
+    if (!warehouseInventory) {
+      throw new Error("WarehouseInventory Not Found");
+    }
+    console.log(typeof warehouseInventory[0].itemId);
+    warehouseInventory = warehouseInventory.filter((inventory) => {
+      return inventory.itemId.itemCategoryId._id.equals(itemCategoryId);
+    });
+    res.status(200).json({ data: warehouseInventory });
+  } catch (error) {
+    if (error instanceof Error)
+      res.status(500).json({ message: error.message });
   }
 };
 
@@ -88,7 +119,7 @@ const readAllWarehouseInventory = async (
 ) => {
   try {
     const warehouses = await WarehouseInventory.find().populate([
-      { path: "itemId", select: "name" },
+      { path: "itemId" },
       { path: "warehouseId", select: "name" },
       { path: "sectionId", select: "name" },
     ]);
@@ -158,7 +189,8 @@ const deleteWarehouseInventory = async (
 export default {
   createWarehouseInventory,
   readAllWarehouseInventory,
-  readWarehouseInventoryOfWarehouse,
+  readInventoryOfWarehouse,
+  readWarehouseItemOfCategory,
   readWarehouseInventory,
   updateWarehouseInventory,
   deleteWarehouseInventory,
