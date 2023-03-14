@@ -1,33 +1,50 @@
 import { NextFunction, Request, Response } from "express";
 import mongoose from "mongoose";
 import RetailerPurchase from "../../models/retailer/RetailerPurchase";
+import Retailer from "../../models/retailer/Retailer";
 import RetailerPurchaseData from "../../models/retailer/RetailerPurchaseData";
 import WarehouseInventory from "../../models/warehouse/WarehouseInventory";
 import { OrderStatus } from "../../models/retailer/RetailerPurchase";
+import RetailerInventory from "../../models/retailer/RetailerInventory";
 
 // When Retailer buys goods from mobile app
 
 // reduce quantity from warehouse inventory (warehouseInventoryId)
 // add quantity to retailer inventory (retailerInventoryId)
-// add retailer purchase
-// add retailer purchase data
-// set amount payable
+// TODO: Finish createRetailerPurchase function
 const createRetailerPurchase = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
   const { retailerId, warehouseInventoryId, warehouseId, items } = req.body;
-  try {
-    const date = new Date();
-    const retailerPurchase = await RetailerPurchase.create({
-      retailerId,
-    });
-    res.status(201).json({ data: retailerPurchase });
-  } catch (error) {
-    if (error instanceof Error)
-      res.status(500).json({ message: error.message });
-  }
+  const session = await RetailerPurchase.startSession();
+  // try {
+  //   session.startTransaction();
+
+  //   // add retailer purchase -XXX
+  //   const retailerPurchase = await RetailerPurchase.create({
+  //     retailerId,
+  //     warehouseId,
+  //   });
+
+  //   // set amount payable -XXX
+  //   const retailerPayable = await Retailer.findOneAndUpdate(
+  //     { _id: retailerId },
+  //     { $inc: { amountPayable: 5 } }
+  //   );
+
+  //   // add retailer purchase data
+  //   await RetailerPurchaseData.insertMany(items);
+
+  //   // https://stackoverflow.com/questions/17207183/way-to-update-multiple-documents-with-different-values
+  //   await RetailerInventory.updateMany({itemId: })
+
+  //   res.status(201).json({ data: retailerPurchase });
+  // } catch (error) {
+  //   if (error instanceof Error)
+  //     res.status(500).json({ message: error.message });
+  // }
 };
 
 const readRetailerPurchase = async (

@@ -21,7 +21,6 @@ export interface IRetailerPurchaseModel extends IRetailerPurchase, Document {}
 const RetailerPurchaseSchema: Schema = new Schema({
   datetime: { type: Date, default: Date.now },
   orderNumber: { type: String, default: uuidv1() },
-  warehouseId: { type: Schema.Types.ObjectId, ref: "Warehouse" },
   orderStatus: {
     type: Number,
     enum: OrderStatus,
@@ -32,6 +31,7 @@ const RetailerPurchaseSchema: Schema = new Schema({
     ref: "Retailer",
     required: true,
   },
+  warehouseId: { type: Schema.Types.ObjectId, ref: "Warehouse" },
   //   warehouseId: {
   //     type: Schema.Types.ObjectId,
   //     ref: "Warehouse",

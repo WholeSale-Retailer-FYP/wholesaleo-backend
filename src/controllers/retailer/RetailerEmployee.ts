@@ -77,10 +77,10 @@ const loginRetailerEmployee = async (
 ) => {
   try {
     const { cnic, password } = req.body;
-    const retailerEmployee = await RetailerEmployee.findOne({ cnic }).populate(
-      "retailerId",
-      "shopName"
-    );
+    const retailerEmployee = await RetailerEmployee.findOne({ cnic }).populate({
+      path: "retailerId",
+      select: ["shopName", "warehouseId"],
+    });
 
     if (!retailerEmployee)
       throw new Error("Retailer not found! Incorrect CNIC");
