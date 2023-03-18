@@ -11,7 +11,7 @@ const RetailerFavoritesSchema: Schema = new Schema({
   retailerId: { type: Schema.Types.ObjectId, ref: "Retailer", required: true },
   itemId: {
     type: Schema.Types.ObjectId,
-    ref: "Item",
+    ref: "WarehouseInventory",
     required: true,
   },
 });

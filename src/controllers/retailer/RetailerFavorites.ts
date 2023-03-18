@@ -7,11 +7,11 @@ const createRetailerFavorites = async (
   res: Response,
   next: NextFunction
 ) => {
-  const { retailerId, warehouseId } = req.body;
+  const { retailerId, warehouseInventoryId } = req.body;
   try {
     const retailerFavorites = await RetailerFavorites.create({
       retailerId,
-      warehouseId,
+      warehouseInventoryId,
     });
     res.status(201).json({ data: retailerFavorites });
   } catch (error) {
@@ -60,10 +60,10 @@ const updateRetailerFavorites = async (
   next: NextFunction
 ) => {
   try {
-    const { _id, name } = req.body;
+    const { _id, retailerId, warehouseInventoryId } = req.body;
     const updatedRetailerFavorites = await RetailerFavorites.updateOne(
       { _id },
-      { name: name }
+      { retailerId, warehouseInventoryId }
     );
     if (!updatedRetailerFavorites)
       throw new Error("RetailerFavorites not found!");
