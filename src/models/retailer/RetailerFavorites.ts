@@ -9,7 +9,7 @@ export interface IRetailerFavoritesModel extends IRetailerFavorites, Document {}
 
 const RetailerFavoritesSchema: Schema = new Schema({
   retailerId: { type: Schema.Types.ObjectId, ref: "Retailer", required: true },
-  itemId: {
+  warehouseInventoryId: {
     type: Schema.Types.ObjectId,
     ref: "WarehouseInventory",
     required: true,

@@ -48,8 +48,27 @@ const readAllRetailerFavorites = async (
   next: NextFunction
 ) => {
   try {
-    const retailerFavoritess = await RetailerFavorites.find();
+    const retailerFavoritess = await RetailerFavorites.find().populate(
+      "warehouseInventoryId"
+    );
     res.status(200).json({ data: retailerFavoritess });
+  } catch (error) {
+    if (error instanceof Error)
+      res.status(500).json({ message: error.message });
+  }
+};
+
+const readFavoritesOfRetailer = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const retailerId = req.params.retailerId;
+    const retailerFavorites = await RetailerFavorites.find({
+      retailerId,
+    }).populate("warehouseInventoryId");
+    res.status(200).json({ data: retailerFavorites });
   } catch (error) {
     if (error instanceof Error)
       res.status(500).json({ message: error.message });
@@ -97,6 +116,7 @@ export default {
   createRetailerFavorites,
   readAllRetailerFavorites,
   readRetailerFavorites,
+  readFavoritesOfRetailer,
   updateRetailerFavorites,
   deleteRetailerFavorites,
 };
