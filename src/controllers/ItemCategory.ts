@@ -30,6 +30,23 @@ const createItemCategory = async (
       res.status(500).json({ message: error.message });
   }
 };
+const createItemCategoryFromUrl = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const { name, image } = req.body;
+  try {
+    const itemCategory = await ItemCategory.create({
+      name,
+      image,
+    });
+    res.status(201).json({ data: itemCategory });
+  } catch (error) {
+    if (error instanceof Error)
+      res.status(500).json({ message: error.message });
+  }
+};
 
 const readItemCategory = async (
   req: Request,
@@ -103,6 +120,7 @@ const deleteItemCategory = async (
 export default {
   createItemCategory,
   readAllItemCategory,
+  createItemCategoryFromUrl,
   readItemCategory,
   updateItemCategory,
   deleteItemCategory,

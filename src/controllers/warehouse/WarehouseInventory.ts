@@ -15,7 +15,6 @@ const createWarehouseInventory = async (
     barcodeId,
     warehouseId,
     itemId,
-    sectionId,
   } = req.body;
   try {
     const warehouse = await WarehouseInventory.create({
@@ -26,7 +25,6 @@ const createWarehouseInventory = async (
       barcodeId,
       warehouseId,
       itemId,
-      sectionId,
     });
     res.status(201).json({ data: warehouse });
   } catch (error) {
@@ -43,11 +41,7 @@ const readWarehouseInventory = async (
     const warehouseInventoryId = req.params.warehouseInventoryId;
     const warehouse = await WarehouseInventory.findById(
       warehouseInventoryId
-    ).populate([
-      { path: "itemId", select: "name" },
-      { path: "warehouseId", select: "name" },
-      { path: "sectionId", select: "name" },
-    ]);
+    ).populate([{ path: "itemId" }, { path: "warehouseId", select: "name" }]);
     if (!warehouse) {
       throw new Error("WarehouseInventory Not Found");
     }
@@ -66,11 +60,7 @@ const readInventoryOfWarehouse = async (
     const warehouseId = req.params.warehouseId;
     const warehouse = await WarehouseInventory.find({
       warehouseId,
-    }).populate([
-      { path: "itemId", select: "name" },
-      { path: "warehouseId", select: "name" },
-      { path: "sectionId", select: "name" },
-    ]);
+    }).populate([{ path: "itemId" }, { path: "warehouseId", select: "name" }]);
 
     if (!warehouse) {
       throw new Error("WarehouseInventory Not Found");
@@ -92,19 +82,16 @@ const readWarehouseItemOfCategory = async (
     const itemCategoryId = req.params.itemCategoryId;
     let warehouseInventory = await WarehouseInventory.find({
       warehouseId,
-    }).populate([
-      { path: "itemId" },
-      { path: "warehouseId", select: "name" },
-      { path: "sectionId", select: "name" },
-    ]);
+    }).populate([{ path: "itemId" }, { path: "warehouseId", select: "name" }]);
 
     if (!warehouseInventory) {
       throw new Error("WarehouseInventory Not Found");
     }
-    console.log(typeof warehouseInventory[0].itemId);
+    console.log(warehouseInventory);
     warehouseInventory = warehouseInventory.filter((inventory) => {
       return inventory.itemId.itemCategoryId._id.equals(itemCategoryId);
     });
+
     res.status(200).json({ data: warehouseInventory });
   } catch (error) {
     if (error instanceof Error)
@@ -121,7 +108,6 @@ const readAllWarehouseInventory = async (
     const warehouses = await WarehouseInventory.find().populate([
       { path: "itemId" },
       { path: "warehouseId", select: "name" },
-      { path: "sectionId", select: "name" },
     ]);
     res.status(200).json({ data: warehouses });
   } catch (error) {
@@ -145,7 +131,6 @@ const updateWarehouseInventory = async (
       barcodeId,
       warehouseId,
       itemId,
-      sectionId,
     } = req.body;
     const updatedWarehouseInventory = await WarehouseInventory.updateOne(
       { _id },
@@ -157,7 +142,6 @@ const updateWarehouseInventory = async (
         barcodeId: barcodeId,
         warehouseId: warehouseId,
         itemId: itemId,
-        sectionId: sectionId,
       }
     );
     if (!updatedWarehouseInventory)
@@ -178,7 +162,7 @@ const deleteWarehouseInventory = async (
     const _id = req.params.warehouseId;
     const warehouse = await WarehouseInventory.deleteOne({ _id });
     if (!warehouse) throw new Error("Could not delete!");
-
+    console.log(warehouse);
     res.status(201).json({ data: true, message: "Deletion was successful!" });
   } catch (error) {
     if (error instanceof Error)

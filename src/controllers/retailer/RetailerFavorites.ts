@@ -29,7 +29,9 @@ const readRetailerFavorites = async (
     const retailerFavoritesId = req.params.retailerFavoritesId;
     const retailerFavorites = await RetailerFavorites.findById(
       retailerFavoritesId
-    );
+    )
+      .populate("retailerId")
+      .populate("warehouseInventoryId");
     if (!retailerFavorites) {
       throw new Error("RetailerFavorites Not Found");
     }

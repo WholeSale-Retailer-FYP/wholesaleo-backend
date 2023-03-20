@@ -28,6 +28,25 @@ const createItem = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
+const createItemFromImageLink = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const { name, itemCategoryId, image } = req.body;
+  try {
+    const item = await Item.create({
+      name,
+      itemCategoryId,
+      image,
+    });
+    res.status(201).json({ data: item });
+  } catch (error) {
+    if (error instanceof Error)
+      res.status(500).json({ message: error.message });
+  }
+};
+
 const readItem = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const itemId = req.params.itemId;
@@ -118,6 +137,7 @@ const deleteItem = async (req: Request, res: Response, next: NextFunction) => {
 
 export default {
   createItem,
+  createItemFromImageLink,
   readAllItem,
   readItemOfCategory,
   readItem,

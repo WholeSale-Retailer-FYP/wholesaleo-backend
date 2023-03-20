@@ -11,6 +11,7 @@ router.post(
   multerUploads.multerUploads,
   controller.createItemCategory
 );
+router.post("/createFromUrl", controller.createItemCategoryFromUrl);
 router.get("/get/:itemCategoryId", controller.readItemCategory);
 router.get("/get/", controller.readAllItemCategory);
 router.put("/update/", controller.updateItemCategory);
