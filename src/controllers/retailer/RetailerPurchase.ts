@@ -9,6 +9,12 @@ import RetailerInventory from "../../models/retailer/RetailerInventory";
 
 // When Retailer buys goods from mobile app
 
+interface IItem {
+  warehouseInventoryId: mongoose.Types.ObjectId;
+  quantity: number;
+  retailerPurchaseId: mongoose.Types.ObjectId;
+}
+
 // reduce quantity from warehouse inventory (warehouseInventoryId)
 // add quantity to retailer inventory (retailerInventoryId)
 // TODO: Finish createRetailerPurchase function
@@ -17,34 +23,62 @@ const createRetailerPurchase = async (
   res: Response,
   next: NextFunction
 ) => {
-  const { retailerId, warehouseInventoryId, warehouseId, items } = req.body;
+  const { retailerId, warehouseId, items, totalAmount } = req.body;
   const session = await RetailerPurchase.startSession();
-  // try {
-  //   session.startTransaction();
+  try {
+    session.startTransaction();
 
-  //   // add retailer purchase -XXX
-  //   const retailerPurchase = await RetailerPurchase.create({
-  //     retailerId,
-  //     warehouseId,
-  //   });
+    const retailerPurchaseId = new mongoose.Types.ObjectId();
 
-  //   // set amount payable -XXX
-  //   const retailerPayable = await Retailer.findOneAndUpdate(
-  //     { _id: retailerId },
-  //     { $inc: { amountPayable: 5 } }
-  //   );
+    // add retailer purchase -XXX
+    const retailerPurchase = await RetailerPurchase.create({
+      _id: retailerPurchaseId,
+      retailerId,
+      warehouseId,
+      totalAmount,
+    });
 
-  //   // add retailer purchase data
-  //   await RetailerPurchaseData.insertMany(items);
+    // set amount payable -XXX
+    const retailerPayable = await Retailer.findOneAndUpdate(
+      { _id: retailerId },
+      { $inc: { amountPayable: 5 } }
+    );
 
-  //   // https://stackoverflow.com/questions/17207183/way-to-update-multiple-documents-with-different-values
-  //   await RetailerInventory.updateMany({itemId: })
+    // add retailer purchase data
+    items.forEach((item: IItem) => {
+      item.retailerPurchaseId = retailerPurchaseId;
+    });
+    await RetailerPurchaseData.insertMany(items);
 
-  //   res.status(201).json({ data: retailerPurchase });
-  // } catch (error) {
-  //   if (error instanceof Error)
-  //     res.status(500).json({ message: error.message });
-  // }
+    // add quantity to retailer inventory (retailerInventoryId)
+    // https://stackoverflow.com/questions/17207183/way-to-update-multiple-documents-with-different-values
+    await RetailerInventory.bulkWrite(
+      items.map((item: IItem) => ({
+        updateOne: {
+          filter: { _id: item.warehouseInventoryId },
+          update: { $inc: { quantity: item.quantity } },
+        },
+      }))
+    );
+
+    // reduce quantity from warehouse inventory (warehouseInventoryId)
+    await WarehouseInventory.bulkWrite(
+      items.map((item: IItem) => ({
+        updateOne: {
+          filter: { _id: item.warehouseInventoryId },
+          update: { $dec: { quantity: item.quantity } },
+        },
+      }))
+    );
+    await session.commitTransaction();
+    res.status(201).json({ data: true });
+    session.endSession();
+  } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
+    if (error instanceof Error)
+      res.status(500).json({ message: error.message });
+  }
 };
 
 const readRetailerPurchase = async (
