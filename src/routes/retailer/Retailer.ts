@@ -10,7 +10,7 @@ router.post("/createShop", controller.createRetailer);
 router.post("/create", controller.createRetailerAndAdmin);
 router.get(
   "/get/:retailerId",
-  auth([Roles.Manager, Roles.Employee]),
+  // auth([Roles.Manager, Roles.Employee]),
   controller.readRetailer
 );
 router.get("/get/", controller.readAllRetailer);

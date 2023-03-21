@@ -67,7 +67,10 @@ const readFavoritesOfRetailer = async (
     const retailerId = req.params.retailerId;
     const retailerFavorites = await RetailerFavorites.find({
       retailerId,
-    }).populate("warehouseInventoryId");
+    }).populate([
+      { path: "retailerId" },
+      { path: "warehouseInventoryId", populate: { path: "itemId" } },
+    ]);
     res.status(200).json({ data: retailerFavorites });
   } catch (error) {
     if (error instanceof Error)
