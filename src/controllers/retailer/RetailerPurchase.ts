@@ -13,6 +13,8 @@ interface IItem {
   warehouseInventoryId: mongoose.Types.ObjectId;
   quantity: number;
   retailerPurchaseId: mongoose.Types.ObjectId;
+  sellingPrice: number;
+  weight: number;
 }
 
 // reduce quantity from warehouse inventory (warehouseInventoryId)
@@ -28,10 +30,9 @@ const createRetailerPurchase = async (
   try {
     session.startTransaction();
 
-    const retailerPurchaseId = new mongoose.Types.ObjectId();
-
     // add retailer purchase -XXX
-    const retailerPurchase = await RetailerPurchase.create({
+    const retailerPurchaseId = new mongoose.Types.ObjectId();
+    await RetailerPurchase.create({
       _id: retailerPurchaseId,
       retailerId,
       warehouseId,
@@ -39,9 +40,9 @@ const createRetailerPurchase = async (
     });
 
     // set amount payable -XXX
-    const retailerPayable = await Retailer.findOneAndUpdate(
+    await Retailer.findOneAndUpdate(
       { _id: retailerId },
-      { $inc: { amountPayable: 5 } }
+      { $inc: { amountPayable: totalAmount } }
     );
 
     // add retailer purchase data
@@ -51,12 +52,24 @@ const createRetailerPurchase = async (
     await RetailerPurchaseData.insertMany(items);
 
     // add quantity to retailer inventory (retailerInventoryId)
-    // https://stackoverflow.com/questions/17207183/way-to-update-multiple-documents-with-different-values
     await RetailerInventory.bulkWrite(
       items.map((item: IItem) => ({
         updateOne: {
-          filter: { _id: item.warehouseInventoryId },
+          filter: {
+            retailerId,
+            warehouseInventoryId: item.warehouseInventoryId,
+          },
           update: { $inc: { quantity: item.quantity } },
+          upsert: true,
+          insertOne: {
+            document: {
+              warehouseInventoryId: item.warehouseInventoryId,
+              quantity: item.quantity,
+              retailerId,
+              originalPrice: item.sellingPrice,
+              weight: item.weight,
+            },
+          },
         },
       }))
     );
@@ -66,10 +79,11 @@ const createRetailerPurchase = async (
       items.map((item: IItem) => ({
         updateOne: {
           filter: { _id: item.warehouseInventoryId },
-          update: { $dec: { quantity: item.quantity } },
+          update: { $inc: { quantity: -item.quantity } },
         },
       }))
     );
+
     await session.commitTransaction();
     res.status(201).json({ data: true });
     session.endSession();

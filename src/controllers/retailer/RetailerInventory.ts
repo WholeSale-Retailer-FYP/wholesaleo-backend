@@ -14,7 +14,7 @@ const createRetailerInventory = async (
     sellingPrice,
     barcodeId,
     retailerId,
-    itemId,
+    warehouseInventoryId,
   } = req.body;
   try {
     const retailer = await RetailerInventory.create({
@@ -24,7 +24,7 @@ const createRetailerInventory = async (
       sellingPrice,
       barcodeId,
       retailerId,
-      itemId,
+      warehouseInventoryId,
     });
     res.status(201).json({ data: retailer });
   } catch (error) {
@@ -44,7 +44,7 @@ const readRetailerInventory = async (
     const retailer = await RetailerInventory.findById(
       retailerInventoryId
     ).populate([
-      { path: "itemId", select: "name" },
+      // { path: "warehouseInventoryId", select: "name" },
       { path: "retailerId", select: "name" },
     ]);
     if (!retailer) {
@@ -69,7 +69,7 @@ const readRetailerInventoryOfRetailer = async (
     const retailer = await RetailerInventory.find({
       retailerId,
     }).populate([
-      { path: "itemId", select: ["name", "image"] },
+      { path: "warehouseInventoryId", select: ["name", "image"] },
       { path: "retailerId", select: "shopName" },
     ]);
 
@@ -90,7 +90,11 @@ const readAllRetailerInventory = async (
 ) => {
   try {
     const retailers = await RetailerInventory.find().populate([
-      { path: "itemId" },
+      {
+        path: "warehouseInventoryId",
+        select: "weight",
+        populate: { path: "itemId", select: ["name", "image"] },
+      },
       { path: "retailerId", select: "shopName" },
     ]);
     res.status(200).json({ data: retailers });
@@ -114,7 +118,7 @@ const updateRetailerInventory = async (
       sellingPrice,
       barcodeId,
       retailerId,
-      itemId,
+      warehouseInventoryId,
     } = req.body;
     const updatedRetailerInventory = await RetailerInventory.updateOne(
       { _id },
@@ -125,7 +129,7 @@ const updateRetailerInventory = async (
         sellingPrice: sellingPrice,
         barcodeId: barcodeId,
         retailerId: retailerId,
-        itemId: itemId,
+        warehouseInventoryId,
       }
     );
     if (!updatedRetailerInventory)
@@ -143,9 +147,10 @@ const deleteRetailerInventory = async (
   next: NextFunction
 ) => {
   try {
-    const _id = req.params.retailerId;
+    const _id = req.params.retailerInventoryId;
     const retailer = await RetailerInventory.deleteOne({ _id });
-    if (!retailer) throw new Error("Could not delete!");
+    if (retailer.acknowledged && retailer.deletedCount == 0)
+      throw new Error("Could not delete!");
 
     res.status(201).json({ data: true, message: "Deletion was successful!" });
   } catch (error) {

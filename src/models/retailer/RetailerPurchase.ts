@@ -34,11 +34,6 @@ const RetailerPurchaseSchema: Schema = new Schema({
   },
   warehouseId: { type: Schema.Types.ObjectId, ref: "Warehouse" },
   totalPrice: { type: Number, default: 0, required: true },
-  //   warehouseId: {
-  //     type: Schema.Types.ObjectId,
-  //     ref: "Warehouse",
-  //     required: true,
-  //   },
 });
 
 export default mongoose.model<IRetailerPurchaseModel>(
