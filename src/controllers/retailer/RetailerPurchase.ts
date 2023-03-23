@@ -25,7 +25,7 @@ const createRetailerPurchase = async (
   res: Response,
   next: NextFunction
 ) => {
-  const { retailerId, warehouseId, items, totalAmount } = req.body;
+  const { retailerId, warehouseId, items, totalPrice } = req.body;
   const session = await RetailerPurchase.startSession();
   try {
     session.startTransaction();
@@ -36,13 +36,13 @@ const createRetailerPurchase = async (
       _id: retailerPurchaseId,
       retailerId,
       warehouseId,
-      totalAmount,
+      totalPrice: totalPrice,
     });
 
     // set amount payable -XXX
     await Retailer.findOneAndUpdate(
       { _id: retailerId },
-      { $inc: { amountPayable: totalAmount } }
+      { $inc: { amountPayable: totalPrice } }
     );
 
     // add retailer purchase data
