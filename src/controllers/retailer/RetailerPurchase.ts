@@ -34,6 +34,7 @@ const createRetailerPurchase = async (
       retailerId,
       warehouseId,
       totalPrice: totalPrice,
+      numItems: items.length,
     });
 
     // set amount payable -XXX
@@ -114,6 +115,28 @@ const readRetailerPurchase = async (
       res.status(500).json({ message: error.message });
   }
 };
+const readPurchasesOfSingleRetailer = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const retailerId = req.params.retailerId;
+    const retailerPurchase = await RetailerPurchase.find({
+      retailerId,
+    }).populate({
+      path: "retailerId",
+      select: ["firstName", "lastName", "shopName"],
+    });
+    if (!retailerPurchase) {
+      throw new Error("RetailerPurchase Not Found");
+    }
+    res.status(200).json({ data: retailerPurchase });
+  } catch (error) {
+    if (error instanceof Error)
+      res.status(500).json({ message: error.message });
+  }
+};
 
 const readAllRetailerPurchase = async (
   req: Request,
@@ -123,8 +146,9 @@ const readAllRetailerPurchase = async (
   try {
     const retailerPurchases = await RetailerPurchase.find().populate({
       path: "retailerId",
-      select: ["firstName", "lastName", "shopName"],
+      select: ["shopName"],
     });
+
     res.status(200).json({ data: retailerPurchases });
   } catch (error) {
     if (error instanceof Error)
@@ -173,6 +197,7 @@ export default {
   createRetailerPurchase,
   readAllRetailerPurchase,
   readRetailerPurchase,
+  readPurchasesOfSingleRetailer,
   updateRetailerPurchase,
   deleteRetailerPurchase,
 };

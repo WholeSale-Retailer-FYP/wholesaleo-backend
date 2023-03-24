@@ -14,6 +14,7 @@ export interface IRetailerPurchase {
   orderStatus: OrderStatus;
   retailerId: mongoose.Types.ObjectId;
   warehouseId: mongoose.Types.ObjectId;
+  numItems: number;
   totalPrice: number;
 }
 
@@ -32,6 +33,7 @@ const RetailerPurchaseSchema: Schema = new Schema({
     ref: "Retailer",
     required: true,
   },
+  numItems: { type: Number, default: 0, required: true },
   warehouseId: { type: Schema.Types.ObjectId, ref: "Warehouse" },
   totalPrice: { type: Number, default: 0, required: true },
 });

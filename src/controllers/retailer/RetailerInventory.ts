@@ -58,7 +58,6 @@ const readRetailerInventory = async (
 };
 
 // get inventory of specific retailer
-// todo: add to postman
 const readRetailerInventoryOfRetailer = async (
   req: Request,
   res: Response,
@@ -69,8 +68,12 @@ const readRetailerInventoryOfRetailer = async (
     const retailer = await RetailerInventory.find({
       retailerId,
     }).populate([
-      { path: "warehouseInventoryId", select: ["name", "image"] },
       { path: "retailerId", select: "shopName" },
+      {
+        path: "warehouseInventoryId",
+        select: "weight",
+        populate: { path: "itemId", select: ["name", "image"] },
+      },
     ]);
 
     if (!retailer) {
