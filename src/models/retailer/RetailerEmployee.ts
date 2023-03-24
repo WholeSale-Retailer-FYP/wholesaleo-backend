@@ -13,6 +13,7 @@ export interface IRetailerEmployee {
   phoneNumber: string;
   password: string;
   role: Roles;
+  image: string;
   retailerId: mongoose.Types.ObjectId;
 }
 
@@ -30,6 +31,9 @@ const RetailerEmployeeSchema: Schema = new Schema(
       enum: Roles,
       default: Roles.Employee,
       required: true,
+    },
+    image: {
+      type: String,
     },
     retailerId: {
       type: Schema.Types.ObjectId,

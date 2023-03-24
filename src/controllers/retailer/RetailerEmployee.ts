@@ -1,7 +1,11 @@
+import { UploadApiResponse, v2 as cloudinary } from "cloudinary";
 import { NextFunction, Request, Response } from "express";
 import jwt, { Secret, JwtPayload } from "jsonwebtoken";
 import RetailerEmployee from "../../models/retailer/RetailerEmployee";
 const bcrypt = require("bcrypt");
+
+const DEFAULT_IMG =
+  "https://res.cloudinary.com/dca8sskac/image/upload/v1679653632/defaultProfile_ae3kr1.png";
 
 const createRetailerEmployee = async (
   req: Request,
@@ -22,6 +26,7 @@ const createRetailerEmployee = async (
       role,
       password: hashedPassword,
       retailerId,
+      image: DEFAULT_IMG,
     });
     res.status(201).json({ data: retailerEmployee });
   } catch (error) {
@@ -117,16 +122,13 @@ const updateRetailerEmployee = async (
   next: NextFunction
 ) => {
   try {
-    const {
-      _id,
-      firstName,
-      lastName,
-      cnic,
-      phoneNumber,
-      role,
-      password,
-      retailerId,
-    } = req.body;
+    const { _id, firstName, lastName, cnic, phoneNumber, role, retailerId } =
+      req.body;
+
+    // check if retailer exists
+    const retailerEmployee = await RetailerEmployee.findById(_id);
+    if (!retailerEmployee) throw new Error("RetailerEmployee not found!");
+
     const updatedRetailerEmployee = await RetailerEmployee.updateOne(
       { _id },
       {
@@ -135,12 +137,85 @@ const updateRetailerEmployee = async (
         cnic: cnic,
         phoneNumber: phoneNumber,
         role: role,
-        password: password,
         retailerId: retailerId,
       }
     );
+
     if (!updatedRetailerEmployee)
-      throw new Error("RetailerEmployee not found!");
+      throw new Error("ERROR: Could not update retailer Info!");
+
+    res.status(201).json({ data: updatedRetailerEmployee });
+  } catch (error) {
+    if (error instanceof Error)
+      res.status(500).json({ message: error.message });
+  }
+};
+
+const updatePassword = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { _id, newPassword, oldPassword } = req.body;
+
+    // check if retailer exists
+    const retailerEmployee = await RetailerEmployee.findById(_id);
+    if (!retailerEmployee) throw new Error("RetailerEmployee not found!");
+
+    //check if old password is correct
+    if (await bcrypt.compare(oldPassword, retailerEmployee.password)) {
+      const salt = await bcrypt.genSalt();
+      const hashedPassword = await bcrypt.hash(newPassword, salt);
+      const updatedRetailerEmployee = await RetailerEmployee.updateOne(
+        { _id },
+        {
+          password: hashedPassword,
+        }
+      );
+
+      if (!updatedRetailerEmployee)
+        throw new Error("ERROR: Could not update retailer Info!");
+
+      res.status(201).json({ data: updatedRetailerEmployee });
+    } else throw new Error("Incorrect Password entered");
+  } catch (error) {
+    if (error instanceof Error)
+      res.status(500).json({ message: error.message });
+  }
+};
+
+const updateImage = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { _id } = req.body;
+
+    const retailerEmployee = await RetailerEmployee.findById(_id);
+    if (!retailerEmployee) throw new Error("RetailerEmployee not found!");
+
+    if (!req.file) res.status(500).json({ message: "No image uploaded!" });
+    let uploadedFile: UploadApiResponse;
+
+    uploadedFile = await cloudinary.uploader.upload(req.file!.path, {
+      resource_type: "auto",
+      width: 350,
+      height: 350,
+    });
+
+    // update image field in retailerExployees
+    const updatedRetailerEmployee = await RetailerEmployee.updateOne(
+      { _id },
+      {
+        image: uploadedFile.secure_url,
+      }
+    );
+    if (!updatedRetailerEmployee) throw new Error("Could not update image!");
+
+    // delete previous image from cloudinary if exists and if it is not default image
+    if (retailerEmployee.image && retailerEmployee.image !== DEFAULT_IMG) {
+      const publicId = retailerEmployee.image.split("/").pop()?.split(".")[0];
+      if (publicId) await cloudinary.uploader.destroy(publicId);
+    }
+
     res.status(201).json({ data: updatedRetailerEmployee });
   } catch (error) {
     if (error instanceof Error)
@@ -171,5 +246,7 @@ export default {
   readRetailerEmployee,
   loginRetailerEmployee,
   updateRetailerEmployee,
+  updatePassword,
+  updateImage,
   deleteRetailerEmployee,
 };

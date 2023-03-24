@@ -17,9 +17,6 @@ interface IItem {
   weight: number;
 }
 
-// reduce quantity from warehouse inventory (warehouseInventoryId)
-// add quantity to retailer inventory (retailerInventoryId)
-// TODO: Finish createRetailerPurchase function
 const createRetailerPurchase = async (
   req: Request,
   res: Response,
