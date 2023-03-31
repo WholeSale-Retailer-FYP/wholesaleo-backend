@@ -119,12 +119,20 @@ const readAllWarehouseInventory = async (
 const searchItem = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { query, warehouseId } = req.params;
-    const items = await WarehouseInventory.find({
-      "itemid.name": { $regex: query, $options: "i" },
+    var q = new RegExp(query, "i");
+    let items = await WarehouseInventory.find({
       warehouseId,
-    }).populate("itemId");
+    }).populate({
+      path: "itemId",
+      options: { retainNullValues: false },
+      match: { $and: [{ name: q }] },
+    });
 
     if (!items) throw new Error("Error Fetching Items!");
+
+    items = items.filter((item) => {
+      return item.itemId != null;
+    });
 
     res.status(200).json({ data: items });
   } catch (error) {
