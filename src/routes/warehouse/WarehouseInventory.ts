@@ -12,6 +12,7 @@ router.get(
   controller.readWarehouseItemOfCategory
 );
 router.put("/update/", controller.updateWarehouseInventory);
+router.get("/search/:query/:warehouseId", controller.searchItem);
 router.delete(
   "/delete/:warehouseInventoryId",
   controller.deleteWarehouseInventory

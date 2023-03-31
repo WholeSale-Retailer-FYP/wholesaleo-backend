@@ -116,6 +116,23 @@ const readAllWarehouseInventory = async (
   }
 };
 
+const searchItem = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { query, warehouseId } = req.params;
+    const items = await WarehouseInventory.find({
+      "itemid.name": { $regex: query, $options: "i" },
+      warehouseId,
+    }).populate("itemId");
+
+    if (!items) throw new Error("Error Fetching Items!");
+
+    res.status(200).json({ data: items });
+  } catch (error) {
+    if (error instanceof Error)
+      res.status(500).json({ message: error.message });
+  }
+};
+
 const updateWarehouseInventory = async (
   req: Request,
   res: Response,
@@ -176,6 +193,7 @@ export default {
   readInventoryOfWarehouse,
   readWarehouseItemOfCategory,
   readWarehouseInventory,
+  searchItem,
   updateWarehouseInventory,
   deleteWarehouseInventory,
 };
