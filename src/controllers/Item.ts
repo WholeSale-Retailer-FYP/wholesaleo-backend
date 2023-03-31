@@ -122,6 +122,20 @@ const updateItem = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
+const searchItem = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const search = req.params.query;
+    const items = await Item.find({
+      name: { $regex: search, $options: "i" },
+    });
+    if (!items) throw new Error("No items found!");
+    res.status(200).json({ data: items });
+  } catch (error) {
+    if (error instanceof Error)
+      res.status(500).json({ message: error.message });
+  }
+};
+
 const deleteItem = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const _id = req.params.itemId;
@@ -139,6 +153,7 @@ export default {
   createItem,
   createItemFromImageLink,
   readAllItem,
+  searchItem,
   readItemOfCategory,
   readItem,
   updateItem,

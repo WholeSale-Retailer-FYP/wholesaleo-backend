@@ -34,6 +34,8 @@ const RetailerEmployeeSchema: Schema = new Schema(
     },
     image: {
       type: String,
+      default:
+        "https://res.cloudinary.com/dca8sskac/image/upload/v1679653632/defaultProfile_ae3kr1.png",
     },
     retailerId: {
       type: Schema.Types.ObjectId,

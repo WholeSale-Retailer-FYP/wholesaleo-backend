@@ -21,6 +21,7 @@ router.put(
   multerUploads.multerUploads,
   controller.updateItem
 );
+router.get("/search/:query", controller.searchItem);
 router.delete("/delete/:itemId", controller.deleteItem);
 
 export = router;
