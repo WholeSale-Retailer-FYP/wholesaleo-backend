@@ -10,6 +10,7 @@ export interface IWarehouseEmployee {
   phoneNumber: string;
   password: string;
   role: Roles;
+  email: string;
   warehouseId: mongoose.Types.ObjectId;
 }
 
@@ -26,6 +27,7 @@ const WarehouseEmployeeSchema: Schema = new Schema(
     phoneNumber: { type: String, required: true, unique: true },
     cnic: { type: String, required: true, unique: true },
     password: { type: String, required: true },
+    email: { type: String, required: true, unique: true },
     role: {
       type: Number,
       enum: Roles,
