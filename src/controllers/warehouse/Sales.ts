@@ -9,7 +9,10 @@ const readWarehouseSales = async (
 ) => {
   try {
     const warehouseId = req.params.warehouseId;
-    const sales = await RetailerPurchase.find({ warehouseId });
+    const sales = await RetailerPurchase.find({ warehouseId }).populate(
+      "retailerId",
+      ["shopName"]
+    );
     if (!sales) {
       throw new Error("RetailerPurchase Not Found");
     }
