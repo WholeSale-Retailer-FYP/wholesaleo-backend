@@ -145,7 +145,8 @@ const updateWarehouseEmployee = async (
       throw new Error("WarehouseEmployee not found!");
     res.status(201).json({ data: updatedWarehouseEmployee });
   } catch (error) {
-    res.status(500).json({ message: error });
+    if (error instanceof Error)
+      res.status(500).json({ message: error.message });
   }
 };
 
