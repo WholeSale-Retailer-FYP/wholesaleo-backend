@@ -1,7 +1,7 @@
 import mongoose, { Model, Schema } from "mongoose";
 
 enum Roles {
-  TOP_ADMIN = 0,
+  TOP_ADMIN = 1,
   PROVINCE_ADMIN,
   CITY_ADMIN,
 }
