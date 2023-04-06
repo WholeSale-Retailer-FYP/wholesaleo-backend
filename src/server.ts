@@ -18,6 +18,7 @@ import warehouseRoutes from "./routes/warehouse/Warehouse";
 import warehouseEmployeeRoutes from "./routes/warehouse/WarehouseEmployee";
 import warehouseInventoryRoutes from "./routes/warehouse/WarehouseInventory";
 import sectionRoutes from "./routes/warehouse/Section";
+import warehouseSalesRoutes from "./routes/warehouse/Sales";
 
 import retailerRoutes from "./routes/retailer/Retailer";
 import retailerEmployeeRoutes from "./routes/retailer/RetailerEmployee";
@@ -93,6 +94,7 @@ const StartServer = () => {
   router.use("/warehouse", warehouseRoutes);
   router.use("/warehouseEmployee", warehouseEmployeeRoutes);
   router.use("/warehouseInventory", warehouseInventoryRoutes);
+  router.use("/warehouseSales", warehouseSalesRoutes);
   router.use("/section", sectionRoutes);
 
   router.use("/retailer", retailerRoutes);
