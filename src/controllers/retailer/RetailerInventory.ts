@@ -120,6 +120,12 @@ interface bigQueryResponse {
   retailerInventoryQuantity?: number;
   lower_bound: number;
   upper_bound: number;
+
+  timestamp?:
+    | string
+    | {
+        value: string;
+      };
 }
 
 // const credentials = {
@@ -240,8 +246,9 @@ const inventoryForecastDetailed = async (
               SELECT
               retailerItem,
               forecast_value ,
-              prediction_interval_lower_bound ,
-              prediction_interval_upper_bound ,
+              prediction_interval_lower_bound AS lower_bound,
+              prediction_interval_upper_bound AS upper_bound,
+              forecast_timestamp AS timestamp
               FROM
                 ML.FORECAST(MODEL \`wholesaleo-fyp.retailer.sales_forecasting\`,
                             STRUCT(${numDays} AS horizon, 0.8 AS confidence_level))
@@ -266,6 +273,8 @@ const inventoryForecastDetailed = async (
       row.forecast_value = Math.floor(forecast_value!);
       row.lower_bound = Math.floor(lower_bound!);
       row.upper_bound = Math.floor(upper_bound!);
+      if (typeof row.timestamp === "object" && row.timestamp !== null)
+        row.timestamp = row.timestamp!.value;
       delete row.retailerItem;
     });
 
