@@ -223,6 +223,92 @@ const inventoryForecast = async (
       res.status(500).json({ message: error.message });
   }
 };
+const inventoryForecastDetailed = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { retailerId, numDays } = req.params;
+    const bq = new BigQuery({
+      // credentials,
+      keyFilename: "src/config/wholesaleo-fyp-3a9962a0bae8.json",
+      projectId: "wholesaleo-fyp",
+    });
+
+    const query = `
+              SELECT
+              retailerItem,
+              forecast_value ,
+              prediction_interval_lower_bound ,
+              prediction_interval_upper_bound ,
+              FROM
+                ML.FORECAST(MODEL \`wholesaleo-fyp.retailer.sales_forecasting\`,
+                            STRUCT(${numDays} AS horizon, 0.8 AS confidence_level))
+              WHERE
+                retailerItem LIKE '${retailerId}_%'
+              `;
+
+    const [job] = await bq.createQueryJob({
+      query: query,
+    });
+    console.log(`Job ${job.id} started.`);
+
+    let [rows] = await job.getQueryResults();
+
+    rows.forEach((row: bigQueryResponse) => {
+      const { forecast_value, lower_bound, upper_bound } = row;
+      const [retailerId, itemId] = row.retailerItem!.split("_");
+
+      row.itemId = itemId;
+      row.retailerId = retailerId;
+
+      row.forecast_value = Math.floor(forecast_value!);
+      row.lower_bound = Math.floor(lower_bound!);
+      row.upper_bound = Math.floor(upper_bound!);
+      delete row.retailerItem;
+    });
+
+    const retailerInventory = await RetailerInventory.find({
+      retailerId,
+    }).populate({
+      path: "warehouseInventoryId",
+      select: ["sellingPrice", "weight"],
+      populate: {
+        path: "itemId",
+        select: ["name", "image", "_id"],
+      },
+    });
+
+    // compare itemId in retailerInventory and itemId in rows add itemId of items where retailerIventory is less than forecast_value and show the difference
+    const finalRows = rows
+      .map((row: bigQueryResponse) => {
+        const { itemId, forecast_value } = row;
+
+        const retailerInventoryItem = retailerInventory.find((item) => {
+          const warehouseInventoryId = item.warehouseInventoryId as any;
+          return warehouseInventoryId.itemId._id == itemId;
+        });
+        if (retailerInventoryItem) {
+          const { quantity } = retailerInventoryItem;
+          if (quantity! < forecast_value!) {
+            row.toBuy = forecast_value! - quantity!;
+            row.retailerInventoryQuantity = quantity;
+            row.warehouseInventory = retailerInventoryItem.warehouseInventoryId;
+          } else {
+            return;
+          }
+          return row;
+        } else return;
+      })
+      .filter((row: bigQueryResponse) => row != null);
+
+    res.status(200).json({ data: finalRows });
+  } catch (error) {
+    if (error instanceof Error)
+      res.status(500).json({ message: error.message });
+  }
+};
 
 const updateRetailerInventory = async (
   req: Request,
@@ -285,6 +371,7 @@ export default {
   readRetailerInventoryOfRetailer,
   readRetailerInventory,
   inventoryForecast,
+  inventoryForecastDetailed,
   updateRetailerInventory,
   deleteRetailerInventory,
 };

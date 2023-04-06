@@ -5,7 +5,7 @@ const create = async (req: Request, res: Response, next: NextFunction) => {
   const { name, email, password, role, cnic, provinceId, cityId, regionId } =
     req.body;
   try {
-    const city = await AdminEmployee.create({
+    const adminEmployee = await AdminEmployee.create({
       name,
       email,
       password,
@@ -15,7 +15,7 @@ const create = async (req: Request, res: Response, next: NextFunction) => {
       cityId,
       regionId,
     });
-    res.status(201).json({ data: city });
+    res.status(201).json({ data: adminEmployee });
   } catch (error) {
     if (error instanceof Error)
       res.status(500).json({ message: error.message });
