@@ -37,7 +37,7 @@ const readWarehouseEmployee = async (
   next: NextFunction
 ) => {
   try {
-    const warehouseId = req.params.warehouseId;
+    const warehouseId = req.params.warehouseEmployeeId;
     const warehouse = await WarehouseEmployee.findById(warehouseId);
     if (!warehouse) {
       throw new Error("WarehouseEmployee Not Found");
