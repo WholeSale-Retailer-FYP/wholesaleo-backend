@@ -12,6 +12,8 @@ import itemRoutes from "./routes/Item";
 import complaintRoute from "./routes/Complaint";
 import retailerCategoryRoute from "./routes/RetailerCategory";
 
+import adminEmployeeRoutes from "./routes/admin/AdminEmployee";
+
 import warehouseRoutes from "./routes/warehouse/Warehouse";
 import warehouseEmployeeRoutes from "./routes/warehouse/WarehouseEmployee";
 import warehouseInventoryRoutes from "./routes/warehouse/WarehouseInventory";
@@ -85,7 +87,8 @@ const StartServer = () => {
   router.use("/itemCategory", itemCategoryRoutes);
   router.use("/item", itemRoutes);
   router.use("/complaint", complaintRoute);
-  router.use("/retailerCategory", retailerCategoryRoute);
+
+  router.use("/adminEmployee", adminEmployeeRoutes);
 
   router.use("/warehouse", warehouseRoutes);
   router.use("/warehouseEmployee", warehouseEmployeeRoutes);
@@ -100,6 +103,7 @@ const StartServer = () => {
   router.use("/retailerPurchase", retailerPurchaseRoutes);
   router.use("/retailerPurchaseData", retailerPurchaseDataRoutes);
   router.use("/retailerFavorites", retailerFavoritesRoutes);
+  router.use("/retailerCategory", retailerCategoryRoute);
 
   /** Healthcheck */
   router.get("/ping", (req, res, next) =>

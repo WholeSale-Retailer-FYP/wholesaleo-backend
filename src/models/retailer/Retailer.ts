@@ -8,7 +8,8 @@ enum ShopSize {
 }
 
 export interface IRetailer {
-  shopName: boolean;
+  _id: mongoose.Types.ObjectId;
+  shopName: string;
   postalCode: number;
   longitude: number;
   latitude: number;
@@ -21,7 +22,7 @@ export interface IRetailer {
   shopSize: ShopSize;
 }
 
-const RetailerSchema: Schema = new Schema({
+const RetailerSchema: Schema<IRetailer> = new Schema({
   _id: { type: Schema.Types.ObjectId, auto: true },
   shopName: { type: String, required: true },
   postalCode: { type: Number, required: true },

@@ -4,8 +4,6 @@ import WarehouseEmployee from "../../models/warehouse/WarehouseEmployee";
 import jwt, { Secret } from "jsonwebtoken";
 const bcrypt = require("bcrypt");
 
-// TODO: user Login
-
 const createWarehouseEmployee = async (
   req: Request,
   res: Response,

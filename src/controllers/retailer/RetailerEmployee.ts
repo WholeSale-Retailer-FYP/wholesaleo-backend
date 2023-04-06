@@ -90,7 +90,6 @@ const loginRetailerEmployee = async (
     if (!retailerEmployee)
       throw new Error("Retailer not found! Incorrect CNIC");
     if (await bcrypt.compare(password, retailerEmployee.password)) {
-      const { _id } = retailerEmployee;
       const data = {
         _id: retailerEmployee._id,
         firstName: retailerEmployee.firstName,
