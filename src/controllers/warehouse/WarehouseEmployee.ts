@@ -63,6 +63,23 @@ const readAllWarehouseEmployee = async (
   }
 };
 
+const readEmployeesOfWarehouse = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const warehouseId = req.params.warehouseId;
+    const warehouses = await WarehouseEmployee.find({ warehouseId });
+    if (!warehouses) throw new Error("Warehouse Not Found");
+
+    res.status(200).json({ data: warehouses });
+  } catch (error) {
+    if (error instanceof Error)
+      res.status(500).json({ message: error.message });
+  }
+};
+
 const loginEmployee = async (
   req: Request,
   res: Response,
@@ -153,6 +170,7 @@ export default {
   createWarehouseEmployee,
   readAllWarehouseEmployee,
   readWarehouseEmployee,
+  readEmployeesOfWarehouse,
   loginEmployee,
   updateWarehouseEmployee,
   deleteWarehouseEmployee,

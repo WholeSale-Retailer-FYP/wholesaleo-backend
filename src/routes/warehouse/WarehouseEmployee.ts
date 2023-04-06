@@ -7,6 +7,7 @@ router.post("/create", controller.createWarehouseEmployee);
 router.post("/login", controller.loginEmployee);
 router.get("/get/:warehouseEmployeeId", controller.readWarehouseEmployee);
 router.get("/get/", controller.readAllWarehouseEmployee);
+router.get("/get/of/:warehouseId", controller.readAllWarehouseEmployee);
 router.put("/update/", controller.updateWarehouseEmployee);
 router.delete(
   "/delete/:warehouseEmployeeId",
