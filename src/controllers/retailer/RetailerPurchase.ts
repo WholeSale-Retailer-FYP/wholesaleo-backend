@@ -124,10 +124,29 @@ const readPurchasesOfSingleRetailer = async (
     const retailerId = req.params.retailerId;
     const retailerPurchase = await RetailerPurchase.find({
       retailerId,
-    }).populate({
-      path: "retailerId",
-      select: ["firstName", "lastName", "shopName"],
-    });
+    }).populate([
+      {
+        path: "retailerId",
+        select: ["firstName", "lastName", "shopName"],
+      },
+      {
+        path: "warehouseId",
+        populate: [
+          {
+            path: "cityId",
+            select: ["name"],
+          },
+          {
+            path: "regionId",
+            select: ["name"],
+          },
+          {
+            path: "provinceId",
+            select: ["name"],
+          },
+        ],
+      },
+    ]);
     if (!retailerPurchase) {
       throw new Error("RetailerPurchase Not Found");
     }
