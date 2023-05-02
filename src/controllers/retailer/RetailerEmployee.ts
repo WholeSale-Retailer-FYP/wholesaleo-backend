@@ -58,6 +58,30 @@ const readRetailerEmployee = async (
   }
 };
 
+const readEmployeesOfSingleRetailer = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const retailerId = req.params.retailerId;
+    const retailer = await RetailerEmployee.find({ retailerId }).populate(
+      "retailerId",
+      "shopName"
+    );
+
+    if (!retailer) {
+      res.status(404).json({ message: "Retailer not Found" });
+      return;
+    }
+
+    res.status(200).json({ data: retailer });
+  } catch (error) {
+    if (error instanceof Error)
+      res.status(500).json({ message: error.message });
+  }
+};
+
 const readAllRetailerEmployee = async (
   req: Request,
   res: Response,
@@ -243,6 +267,7 @@ export default {
   createRetailerEmployee,
   readAllRetailerEmployee,
   readRetailerEmployee,
+  readEmployeesOfSingleRetailer,
   loginRetailerEmployee,
   updateRetailerEmployee,
   updatePassword,

@@ -122,6 +122,8 @@ const loginEmployee = async (
   }
 };
 
+// TODO: Add Update Password route
+
 const updateWarehouseEmployee = async (
   req: Request,
   res: Response,

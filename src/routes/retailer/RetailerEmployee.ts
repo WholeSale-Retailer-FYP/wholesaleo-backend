@@ -6,8 +6,12 @@ import * as multerUploads from "../../middleware/multer";
 const router = express.Router();
 
 router.post("/create", controller.createRetailerEmployee);
-router.get("/get/:retailerEmployeeId", controller.readRetailerEmployee);
 router.get("/get/", controller.readAllRetailerEmployee);
+router.get("/get/:retailerEmployeeId", controller.readRetailerEmployee);
+router.get(
+  "/get/retailer/:retailerId",
+  controller.readEmployeesOfSingleRetailer
+);
 router.post("/login/", controller.loginRetailerEmployee);
 router.put("/update/", controller.updateRetailerEmployee);
 router.put("/update/password", controller.updatePassword);
