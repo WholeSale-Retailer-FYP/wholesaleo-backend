@@ -3,6 +3,7 @@ import mongoose, { Document, Schema } from "mongoose";
 export interface IItemCategory {
   name: string;
   image: string;
+  custom?: boolean;
 }
 
 export interface IItemCategoryModel extends IItemCategory, Document {}

@@ -1,7 +1,8 @@
 import { NextFunction, Request, Response } from "express";
 import mongoose from "mongoose";
-import ItemCategory from "../models/ItemCategory";
+import ItemCategory, { IItemCategory } from "../models/ItemCategory";
 import { UploadApiResponse, v2 as cloudinary } from "cloudinary";
+import CustomCategory from "../models/retailer/CustomCategory";
 
 const createItemCategory = async (
   req: Request,
@@ -80,6 +81,27 @@ const readAllItemCategory = async (
   }
 };
 
+const readDefaultAndCustomCategories = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { retailerId } = req.params;
+    let itemCategorys = await ItemCategory.find();
+    let customCategoryOfRetailer = await CustomCategory.find({
+      retailerId,
+    });
+
+    itemCategorys.push(...customCategoryOfRetailer);
+
+    res.status(200).json({ data: itemCategorys });
+  } catch (error) {
+    if (error instanceof Error)
+      res.status(500).json({ message: error.message });
+  }
+};
+
 // todo: Handle image update. Delete previous image in Cloudinary andn then add new image to Cloudinary
 const updateItemCategory = async (
   req: Request,
@@ -122,6 +144,7 @@ export default {
   readAllItemCategory,
   createItemCategoryFromUrl,
   readItemCategory,
+  readDefaultAndCustomCategories,
   updateItemCategory,
   deleteItemCategory,
 };

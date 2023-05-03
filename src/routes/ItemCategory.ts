@@ -14,6 +14,10 @@ router.post(
 router.post("/createFromUrl", controller.createItemCategoryFromUrl);
 router.get("/get/:itemCategoryId", controller.readItemCategory);
 router.get("/get/", controller.readAllItemCategory);
+router.get(
+  "/get/defaultAndCustom/:retailerId",
+  controller.readDefaultAndCustomCategories
+);
 router.put("/update/", controller.updateItemCategory);
 router.delete("/delete/:itemCategoryId", controller.deleteItemCategory);
 
