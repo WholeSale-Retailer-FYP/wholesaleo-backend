@@ -28,6 +28,8 @@ import retailerSaleDataRoutes from "./routes/retailer/RetailerSaleData";
 import retailerPurchaseRoutes from "./routes/retailer/RetailerPurchase";
 import retailerPurchaseDataRoutes from "./routes/retailer/RetailerPurchaseData";
 import retailerFavoritesRoutes from "./routes/retailer/RetailerFavorites";
+import CustomCategory from "./routes/retailer/CustomCategory";
+import CustomItem from "./routes/retailer/CustomItem";
 
 const router = express();
 
@@ -106,6 +108,8 @@ const StartServer = () => {
   router.use("/retailerPurchaseData", retailerPurchaseDataRoutes);
   router.use("/retailerFavorites", retailerFavoritesRoutes);
   router.use("/retailerCategory", retailerCategoryRoute);
+  router.use("/customCategory", CustomCategory);
+  router.use("/customItem", CustomItem);
 
   /** Healthcheck */
   router.get("/ping", (req, res, next) =>
