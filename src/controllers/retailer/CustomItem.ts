@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import mongoose from "mongoose";
-import CustomItem from "../../models/retailer/CustomItem";
+import CustomItem, { ICustomItem } from "../../models/retailer/CustomItem";
 
 const createCustomItem = async (
   req: Request,
@@ -44,9 +44,20 @@ const getAllCustomItem = async (
   next: NextFunction
 ) => {
   try {
-    const customCategories = await CustomItem.find();
-    if (!customCategories) throw new Error("Custom Category not found!");
-    res.status(200).json({ data: customCategories });
+    const customItems = await CustomItem.find().populate([
+      {
+        path: "customCategoryId",
+        select: "name",
+      },
+      {
+        path: "retailerId",
+        select: "shopName",
+      },
+    ]);
+    if (!customItems) throw new Error("Custom Category not found!");
+    const copy = convertCustomItemToDefaultItem(customItems);
+
+    res.status(200).json({ data: copy });
   } catch (error) {
     if (error instanceof Error)
       res.status(500).json({ message: error.message });
@@ -139,6 +150,48 @@ const deleteCustomItemById = async (
       res.status(500).json({ message: error.message });
   }
 };
+
+export function convertCustomItemToDefaultItem(items: ICustomItem[]) {
+  return items.map((item) => {
+    const {
+      _id,
+      name,
+      image,
+      weight,
+      sellingPrice,
+      quantity,
+      retailerId,
+      originalPrice,
+      description,
+      customCategoryId,
+    } = item;
+
+    let warehouseInventoryId: any = {};
+    const customCategoryName = customCategoryId as any;
+    warehouseInventoryId._id = "x";
+    warehouseInventoryId.weight = weight;
+    warehouseInventoryId.itemid = {
+      _id,
+      name,
+      image,
+      description,
+      categoryId: {
+        _id: customCategoryId._id,
+        name: customCategoryName.name,
+      },
+    };
+
+    return {
+      _id,
+      custom: true,
+      retailerId,
+      warehouseInventoryId,
+      quantity,
+      sellingPrice,
+      originalPrice,
+    };
+  });
+}
 
 export default {
   createCustomItem,

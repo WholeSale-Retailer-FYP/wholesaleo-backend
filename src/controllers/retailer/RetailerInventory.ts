@@ -1,6 +1,8 @@
 import { NextFunction, Request, Response } from "express";
 import mongoose from "mongoose";
+import CustomItem from "../../models/retailer/CustomItem";
 import RetailerInventory from "../../models/retailer/RetailerInventory";
+import { convertCustomItemToDefaultItem } from "./CustomItem";
 const { BigQuery } = require("@google-cloud/bigquery");
 
 const createRetailerInventory = async (
@@ -102,6 +104,53 @@ const readAllRetailerInventory = async (
       { path: "retailerId", select: "shopName" },
     ]);
     res.status(200).json({ data: retailers });
+  } catch (error) {
+    if (error instanceof Error)
+      res.status(500).json({ message: error.message });
+  }
+};
+
+const readDefaultAndCustomInventory = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const retailerId = req.params.retailerId;
+    let retailerDefaultInventory = await RetailerInventory.find({
+      retailerId,
+    }).populate([
+      { path: "retailerId", select: "shopName" },
+      {
+        path: "warehouseInventoryId",
+        select: "weight",
+        populate: { path: "itemId", select: ["name", "image"] },
+      },
+    ]);
+
+    if (!retailerDefaultInventory)
+      throw new Error("RetailerInventory Not Found");
+
+    const retailerCustomInventory = await CustomItem.find({
+      retailerId,
+    }).populate([
+      {
+        path: "customCategoryId",
+        select: "name",
+      },
+      {
+        path: "retailerId",
+        select: "shopName",
+      },
+    ]);
+    if (!retailerCustomInventory) throw new Error("Custom Inventory Not Found");
+    const copyCustomInventory = convertCustomItemToDefaultItem(
+      retailerCustomInventory
+    );
+
+    res
+      .status(200)
+      .json({ data: [...retailerDefaultInventory, ...copyCustomInventory] });
   } catch (error) {
     if (error instanceof Error)
       res.status(500).json({ message: error.message });
@@ -379,6 +428,7 @@ export default {
   readAllRetailerInventory,
   readRetailerInventoryOfRetailer,
   readRetailerInventory,
+  readDefaultAndCustomInventory,
   inventoryForecast,
   inventoryForecastDetailed,
   updateRetailerInventory,
