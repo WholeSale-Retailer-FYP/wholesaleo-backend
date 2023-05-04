@@ -1,7 +1,8 @@
+import { object } from "joi";
 import mongoose, { Document, Schema } from "mongoose";
 
 export interface IRetailerSaleData {
-  retailerInventoryId: mongoose.Types.ObjectId;
+  retailerInventoryId: mongoose.Types.ObjectId | { sellingPrice: number };
   quantity: number;
   retailerPOSId: mongoose.Types.ObjectId;
 }

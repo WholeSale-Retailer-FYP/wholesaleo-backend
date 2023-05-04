@@ -4,6 +4,9 @@ import Retailer from "../../models/retailer/Retailer";
 import RetailerEmployee, {
   Roles,
 } from "../../models/retailer/RetailerEmployee";
+import RetailerPurchase from "../../models/retailer/RetailerPurchase";
+import RetailerSaleData from "../../models/retailer/RetailerSaleData";
+
 const bcrypt = require("bcrypt");
 
 const createRetailer = async (
@@ -224,6 +227,64 @@ const deleteRetailer = async (
   }
 };
 
+interface DashboardAnalytics {
+  accountPayable: number;
+  totalOrders: number;
+  totalSalesCount: number;
+  totalSalesAmount: number;
+  totalEmployees: number;
+}
+
+const dashboardAnalytics = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const retailerId = req.params.retailerId;
+    let analytics: DashboardAnalytics = {
+      accountPayable: 0,
+      totalOrders: 0,
+      totalSalesCount: 0,
+      totalSalesAmount: 0,
+      totalEmployees: 0,
+    };
+    const retailer = await Retailer.findById(retailerId);
+    if (!retailer) throw new Error("Retailer Not Found");
+
+    analytics.accountPayable = retailer.amountPayable;
+
+    // get sales of retailer
+    const retailerSales = await RetailerSaleData.find({ retailerId }).populate(
+      "retailerInventoryId"
+    );
+
+    if (retailerSales) {
+      analytics.totalSalesCount = retailerSales.length;
+
+      // TODO: get retailer sales amount
+      // const copy = retailerSales as any;
+      // analytics.totalSalesAmount = copy.reduce(
+      //   (acc: any, curr: any) => acc + curr.retailerInventoryId.sellingPrice,
+      //   0
+      // );
+    }
+
+    // get employees of retailer
+    const employees = await RetailerEmployee.find({ retailerId });
+    if (RetailerEmployee) analytics.totalEmployees = employees.length;
+
+    // get orders of retailer
+    const retailerPurchase = await RetailerPurchase.find({ retailerId });
+    if (retailerPurchase) analytics.totalOrders = retailerPurchase.length;
+
+    res.status(200).json({ data: analytics });
+  } catch (error) {
+    if (error instanceof Error)
+      res.status(500).json({ message: error.message });
+  }
+};
+
 export default {
   createRetailer,
   createRetailerAndAdmin,
@@ -232,4 +293,5 @@ export default {
   verifyRetailer,
   updateRetailer,
   deleteRetailer,
+  dashboardAnalytics,
 };
