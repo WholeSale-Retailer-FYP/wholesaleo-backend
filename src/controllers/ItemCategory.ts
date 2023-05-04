@@ -88,14 +88,32 @@ const readDefaultAndCustomCategories = async (
 ) => {
   try {
     const { retailerId } = req.params;
-    let itemCategorys = await ItemCategory.find();
-    let customCategoryOfRetailer = await CustomCategory.find({
+    var itemCategorys = await ItemCategory.find();
+    if (!itemCategorys) throw new Error("ItemCategory not found!");
+
+    const customCategoryOfRetailer = await CustomCategory.find({
       retailerId,
     });
+    if (!customCategoryOfRetailer)
+      throw new Error("Custom Category of Retailer not found!");
 
-    itemCategorys.push(...customCategoryOfRetailer);
+    let allCategories = itemCategorys.map((itemCategory) => {
+      return {
+        ...itemCategory._doc,
+        custom: false,
+      };
+    });
 
-    res.status(200).json({ data: itemCategorys });
+    let customCategories = customCategoryOfRetailer.map((customCategory) => {
+      return {
+        ...customCategory._doc,
+        custom: true,
+      };
+    });
+
+    allCategories.push(...customCategories);
+
+    res.status(200).json({ data: allCategories });
   } catch (error) {
     if (error instanceof Error)
       res.status(500).json({ message: error.message });

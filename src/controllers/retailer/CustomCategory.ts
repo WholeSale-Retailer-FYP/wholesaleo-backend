@@ -7,11 +7,12 @@ const createCustomCategory = async (
   res: Response,
   next: NextFunction
 ) => {
-  const { name, retailerId } = req.body;
+  const { name, retailerId, image } = req.body;
   try {
     const customCategory = await CustomCategory.create({
       name,
       retailerId,
+      image,
     });
     if (!customCategory) throw new Error("Custom Category not created!");
     res.status(201).json({ data: customCategory });
@@ -76,11 +77,12 @@ const updateCustomCategoryById = async (
   res: Response,
   next: NextFunction
 ) => {
-  const { _id, name, retailerId } = req.body;
+  const { _id, name, retailerId, image } = req.body;
   try {
     const customCategory = await CustomCategory.findByIdAndUpdate(_id, {
       name,
       retailerId,
+      image,
     });
     if (!customCategory) throw new Error("Custom Category not found!");
     res.status(200).json({ data: customCategory });

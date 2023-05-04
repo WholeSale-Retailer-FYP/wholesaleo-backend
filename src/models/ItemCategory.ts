@@ -1,6 +1,10 @@
 import mongoose, { Document, Schema } from "mongoose";
 
-export interface IItemCategory {
+interface DocumentResult<T> {
+  _doc: T;
+}
+
+export interface IItemCategory extends DocumentResult<IItemCategory> {
   name: string;
   image: string;
   custom?: boolean;
