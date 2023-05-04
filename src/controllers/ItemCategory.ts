@@ -94,6 +94,7 @@ const readDefaultAndCustomCategories = async (
     const customCategoryOfRetailer = await CustomCategory.find({
       retailerId,
     });
+
     if (!customCategoryOfRetailer)
       throw new Error("Custom Category of Retailer not found!");
 

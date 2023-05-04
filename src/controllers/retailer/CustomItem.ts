@@ -7,12 +7,27 @@ const createCustomItem = async (
   res: Response,
   next: NextFunction
 ) => {
-  const { name, retailerId, image, customCategoryId } = req.body;
+  const {
+    name,
+    image,
+    weight,
+    description,
+    sellingPrice,
+    originalPrice,
+    quantity,
+    retailerId,
+    customCategoryId,
+  } = req.body;
   try {
     const customItem = await CustomItem.create({
       name,
-      retailerId,
       image,
+      weight,
+      description,
+      sellingPrice,
+      originalPrice,
+      quantity,
+      retailerId,
       customCategoryId,
     });
     if (!customItem) throw new Error("Custom Category not created!");
@@ -78,12 +93,28 @@ const updateCustomItemById = async (
   res: Response,
   next: NextFunction
 ) => {
-  const { _id, name, retailerId, image, customCategoryId } = req.body;
+  const {
+    _id,
+    name,
+    image,
+    weight,
+    description,
+    sellingPrice,
+    originalPrice,
+    quantity,
+    retailerId,
+    customCategoryId,
+  } = req.body;
   try {
     const customItem = await CustomItem.findByIdAndUpdate(_id, {
       name,
-      retailerId,
       image,
+      weight,
+      description,
+      sellingPrice,
+      originalPrice,
+      quantity,
+      retailerId,
       customCategoryId,
     });
     if (!customItem) throw new Error("Custom Category not found!");
