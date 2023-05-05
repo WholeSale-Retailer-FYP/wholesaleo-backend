@@ -123,8 +123,11 @@ const readDefaultAndCustomInventory = async (
       { path: "retailerId", select: "shopName" },
       {
         path: "warehouseInventoryId",
-        select: "weight",
-        populate: { path: "itemId", select: ["name", "image"] },
+        select: ["weight", "itemId"],
+        populate: {
+          path: "itemId",
+          populate: { path: "itemCategoryId", select: "name" },
+        },
       },
     ]);
 

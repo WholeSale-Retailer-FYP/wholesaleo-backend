@@ -175,7 +175,7 @@ export function convertCustomItemToDefaultItem(items: ICustomItem[]) {
       name,
       image,
       description,
-      categoryId: {
+      itemCategoryId: {
         _id: customCategoryId == null ? "x" : customCategoryName._id,
         name: customCategoryName == null ? "x" : customCategoryName.name,
       },
