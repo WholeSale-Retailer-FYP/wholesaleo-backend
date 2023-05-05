@@ -170,16 +170,25 @@ export function convertCustomItemToDefaultItem(items: ICustomItem[]) {
     const customCategoryName = customCategoryId as any;
     warehouseInventoryId._id = "x";
     warehouseInventoryId.weight = weight;
-    warehouseInventoryId.itemid = {
+    warehouseInventoryId.itemId = {
       _id,
       name,
       image,
       description,
       categoryId: {
-        _id: customCategoryId._id,
-        name: customCategoryName.name,
+        _id: customCategoryId == null ? "x" : customCategoryName._id,
+        name: customCategoryName == null ? "x" : customCategoryName.name,
       },
     };
+
+    // if (customCategoryId == null) {
+    //   console.log("here");
+    //   warehouseInventoryId.itemId.categoryId._id = "x";
+    //   warehouseInventoryId.itemId.categoryId.name = "X";
+    // } else {
+    //   warehouseInventoryId.itemId.categoryId._id = customCategoryId._id;
+    //   warehouseInventoryId.itemId.categoryId.name = customCategoryName.name;
+    // }
 
     return {
       _id,
