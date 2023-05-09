@@ -18,6 +18,7 @@ const createRetailerInventory = async (
     barcodeId,
     retailerId,
     warehouseInventoryId,
+    types,
   } = req.body;
   try {
     const retailer = await RetailerInventory.create({
@@ -28,6 +29,7 @@ const createRetailerInventory = async (
       barcodeId,
       retailerId,
       warehouseInventoryId,
+      types,
     });
     res.status(201).json({ data: retailer });
   } catch (error) {
@@ -386,6 +388,7 @@ const updateRetailerInventory = async (
       barcodeId,
       retailerId,
       warehouseInventoryId,
+      types,
     } = req.body;
     const updatedRetailerInventory = await RetailerInventory.updateOne(
       { _id },
@@ -397,6 +400,7 @@ const updateRetailerInventory = async (
         barcodeId: barcodeId,
         retailerId: retailerId,
         warehouseInventoryId,
+        types,
       }
     );
     if (!updatedRetailerInventory)

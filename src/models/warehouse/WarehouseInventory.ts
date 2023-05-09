@@ -9,6 +9,7 @@ export interface IWarehouseInventory {
   warehouseId: mongoose.Types.ObjectId;
   itemId: mongoose.Types.ObjectId | any;
   sectionId: mongoose.Types.ObjectId;
+  types: Array<object>;
 }
 
 export interface IWarehouseInventoryModel
@@ -27,6 +28,7 @@ const WarehouseInventorySchema: Schema = new Schema({
     ref: "Warehouse",
   },
   itemId: { type: Schema.Types.ObjectId, required: true, ref: "Item" },
+  types: [{ type: Object, required: true }],
 });
 
 export default mongoose.model<IWarehouseInventoryModel>(

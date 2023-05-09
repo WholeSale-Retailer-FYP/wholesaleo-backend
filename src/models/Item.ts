@@ -4,6 +4,8 @@ export interface IItem {
   name: string;
   image: string;
   itemCategoryId: mongoose.Types.ObjectId;
+  // types: Array<mongoose.Types.ObjectId>;
+  types: Array<object>;
 }
 
 export interface IItemModel extends IItem, Document {}
@@ -16,6 +18,7 @@ const ItemSchema: Schema = new Schema({
     required: true,
     ref: "ItemCategory",
   },
+  types: [{ type: Object, required: true }],
 });
 
 ItemSchema.index({ name: "text" });

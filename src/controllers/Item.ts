@@ -4,7 +4,7 @@ import Item from "../models/Item";
 import { UploadApiResponse, v2 as cloudinary } from "cloudinary";
 
 const createItem = async (req: Request, res: Response, next: NextFunction) => {
-  const { name, itemCategoryId } = req.body;
+  const { name, itemCategoryId, types } = req.body;
   try {
     if (!req.file) res.status(500).json({ message: "No file present" });
     let uploadedFile: UploadApiResponse;
@@ -16,10 +16,13 @@ const createItem = async (req: Request, res: Response, next: NextFunction) => {
       height: 350,
     });
 
+    console.log(types);
+
     const item = await Item.create({
       name,
       itemCategoryId,
       image: uploadedFile.secure_url,
+      types,
     });
     res.status(201).json({ data: item });
   } catch (error) {
@@ -33,12 +36,13 @@ const createItemFromImageLink = async (
   res: Response,
   next: NextFunction
 ) => {
-  const { name, itemCategoryId, image } = req.body;
+  const { name, itemCategoryId, image, types } = req.body;
   try {
     const item = await Item.create({
       name,
       itemCategoryId,
       image,
+      types,
     });
     res.status(201).json({ data: item });
   } catch (error) {
@@ -105,13 +109,14 @@ const updateItem = async (req: Request, res: Response, next: NextFunction) => {
       height: 350,
     });
 
-    const { _id, name, itemCategoryId } = req.body;
+    const { _id, name, itemCategoryId, types } = req.body;
     const updatedItem = await Item.updateOne(
       { _id },
       {
-        name: name,
-        itemCategoryId: itemCategoryId,
+        name,
+        itemCategoryId,
         image: uploadedFile.secure_url,
+        types,
       }
     );
     if (!updatedItem) throw new Error("Item not found!");

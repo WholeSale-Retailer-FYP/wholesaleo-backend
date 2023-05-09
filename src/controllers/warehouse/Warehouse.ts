@@ -1,5 +1,8 @@
 import { NextFunction, Request, Response } from "express";
 import mongoose from "mongoose";
+import Retailer from "../../models/retailer/Retailer";
+import RetailerPurchase from "../../models/retailer/RetailerPurchase";
+import RetailerPurchaseData from "../../models/retailer/RetailerPurchaseData";
 import Warehouse from "../../models/warehouse/Warehouse";
 // Routes needed:
 // Verify warehouse
@@ -125,6 +128,105 @@ const deleteWarehouse = async (
   }
 };
 
+const dashboardAnalytics = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { warehouseId } = req.params;
+    let details = {
+      totalRetailers: 0,
+      salesToday: 0,
+      monthlySales: 0,
+      yearlySales: 0,
+      monthlyData: [
+        { month: "January", totalSales: 0 },
+        { month: "February", totalSales: 0 },
+        { month: "March", totalSales: 0 },
+        { month: "April", totalSales: 0 },
+        { month: "May", totalSales: 0 },
+        { month: "June", totalSales: 0 },
+        { month: "July", totalSales: 0 },
+        { month: "August", totalSales: 0 },
+        { month: "September", totalSales: 0 },
+        { month: "October", totalSales: 0 },
+        { month: "November", totalSales: 0 },
+        { month: "December", totalSales: 0 },
+      ],
+    };
+
+    const totalRetailers = await Retailer.find({
+      warehouseId,
+    }).countDocuments();
+    if (totalRetailers) details.totalRetailers = totalRetailers;
+
+    const salesToday = await RetailerPurchase.find({
+      warehouseId,
+      datetime: { $gte: new Date().setHours(0, 0, 0, 0) },
+    }).countDocuments();
+    if (salesToday) details.salesToday = salesToday;
+
+    const monthlySales = await RetailerPurchase.find({
+      warehouseId,
+      datetime: { $gte: new Date().setDate(1) },
+    }).countDocuments();
+    if (monthlySales) details.monthlySales = monthlySales;
+
+    const yearlySales = await RetailerPurchase.find({
+      warehouseId,
+      datetime: { $gte: new Date().setMonth(0) },
+    }).countDocuments();
+    if (yearlySales) details.yearlySales = yearlySales;
+
+    // get total sales for each month
+    const monthlySalesData = await RetailerPurchase.aggregate([
+      {
+        $group: {
+          _id: { $month: "$datetime" }, // Assuming the date field is named "datetime"
+          totalSales: { $sum: "$totalPrice" }, // Assuming the sales amount field is named "totalPrice"
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          month: {
+            $switch: {
+              branches: [
+                { case: { $eq: ["$_id", 1] }, then: "January" },
+                { case: { $eq: ["$_id", 2] }, then: "February" },
+                { case: { $eq: ["$_id", 3] }, then: "March" },
+                { case: { $eq: ["$_id", 4] }, then: "April" },
+                { case: { $eq: ["$_id", 5] }, then: "May" },
+                { case: { $eq: ["$_id", 6] }, then: "June" },
+                { case: { $eq: ["$_id", 7] }, then: "July" },
+                { case: { $eq: ["$_id", 8] }, then: "August" },
+                { case: { $eq: ["$_id", 9] }, then: "September" },
+                { case: { $eq: ["$_id", 10] }, then: "October" },
+                { case: { $eq: ["$_id", 11] }, then: "November" },
+                { case: { $eq: ["$_id", 12] }, then: "December" },
+              ],
+              default: "Unknown",
+            },
+          },
+          totalSales: 1,
+        },
+      },
+    ]);
+    monthlySalesData.forEach((data) => {
+      const index = details.monthlyData.findIndex(
+        (month) => month.month === data.month
+      );
+      details.monthlyData[index].totalSales = data.totalSales;
+    });
+
+    res.status(500).json({ data: details });
+  } catch (error) {
+    if (error instanceof Error)
+      res.status(500).json({ message: error.message });
+  }
+};
+
 export default {
   createWarehouse,
   readAllWarehouse,
@@ -132,4 +234,5 @@ export default {
   verifyWarehouse,
   updateWarehouse,
   deleteWarehouse,
+  dashboardAnalytics,
 };

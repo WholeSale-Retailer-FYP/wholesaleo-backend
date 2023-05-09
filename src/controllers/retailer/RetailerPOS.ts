@@ -1,17 +1,74 @@
 import { NextFunction, Request, Response } from "express";
 import mongoose from "mongoose";
+import RetailerInventory from "../../models/retailer/RetailerInventory";
 import RetailerPOS from "../../models/retailer/RetailerPOS";
+import RetailerSaleData from "../../models/retailer/RetailerSaleData";
+
+// const createRetailerPOS = async (
+//   req: Request,
+//   res: Response,
+//   next: NextFunction
+// ) => {
+//   const { retailerEmployeeId } = req.body;
+//   try {
+//     const retailerPOS = await RetailerPOS.create({ retailerEmployeeId });
+//     res.status(201).json({ data: retailerPOS });
+//   } catch (error) {
+//     if (error instanceof Error)
+//       res.status(500).json({ message: error.message });
+//   }
+// };
+interface IItem {
+  retailerInventoryId: mongoose.Types.ObjectId;
+  warehouseInventoryId: mongoose.Types.ObjectId;
+  quantity: number;
+  retailerPurchaseId: mongoose.Types.ObjectId;
+  sellingPrice: number;
+  weight: number;
+}
 
 const createRetailerPOS = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
-  const { retailerEmployeeId } = req.body;
+  const { items, retailerId, retailerEmployeeId } = req.body;
+  const session = await mongoose.startSession();
   try {
-    const retailerPOS = await RetailerPOS.create({ retailerEmployeeId });
-    res.status(201).json({ data: retailerPOS });
+    session.startTransaction(); //--------------------
+
+    const retailerPOSId = new mongoose.Types.ObjectId();
+    await RetailerPOS.create({
+      _id: retailerPOSId,
+      retailerEmployeeId,
+    });
+
+    const retailerSaleData = await RetailerSaleData.insertMany(
+      items.map((item: IItem) => ({
+        retailerInventoryId: item.retailerInventoryId,
+        quantity: item.quantity,
+        retailerPOSId: retailerPOSId,
+      }))
+    );
+
+    await RetailerInventory.bulkWrite(
+      items.map((item: IItem) => ({
+        updateOne: {
+          filter: {
+            retailerId,
+            warehouseInventoryId: item.warehouseInventoryId,
+          },
+          update: { $inc: { quantity: -item.quantity } },
+        },
+      }))
+    );
+
+    await session.commitTransaction(); //--------------------
+    session.endSession();
+    res.status(201).json({ data: retailerSaleData });
   } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
     if (error instanceof Error)
       res.status(500).json({ message: error.message });
   }

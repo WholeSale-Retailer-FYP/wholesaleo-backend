@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import mongoose from "mongoose";
+import RetailerInventory from "../../models/retailer/RetailerInventory";
 import RetailerSaleData from "../../models/retailer/RetailerSaleData";
 
 const createRetailerSaleData = async (

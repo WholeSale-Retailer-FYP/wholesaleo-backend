@@ -9,6 +9,7 @@ import cityRoutes from "./routes/City";
 import regionRoutes from "./routes/Region";
 import itemCategoryRoutes from "./routes/ItemCategory";
 import itemRoutes from "./routes/Item";
+import itemTypeRoutes from "./routes/ItemType";
 import complaintRoute from "./routes/Complaint";
 import retailerCategoryRoute from "./routes/RetailerCategory";
 
@@ -89,6 +90,7 @@ const StartServer = () => {
   router.use("/region", regionRoutes);
   router.use("/itemCategory", itemCategoryRoutes);
   router.use("/item", itemRoutes);
+  router.use("/itemType", itemTypeRoutes);
   router.use("/complaint", complaintRoute);
 
   router.use("/adminEmployee", adminEmployeeRoutes);

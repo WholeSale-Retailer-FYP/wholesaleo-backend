@@ -15,6 +15,7 @@ const createWarehouseInventory = async (
     barcodeId,
     warehouseId,
     itemId,
+    types,
   } = req.body;
   try {
     const warehouse = await WarehouseInventory.create({
@@ -25,6 +26,7 @@ const createWarehouseInventory = async (
       barcodeId,
       warehouseId,
       itemId,
+      types,
     });
     res.status(201).json({ data: warehouse });
   } catch (error) {
@@ -156,20 +158,25 @@ const updateWarehouseInventory = async (
       barcodeId,
       warehouseId,
       itemId,
+      types,
     } = req.body;
     const updatedWarehouseInventory = await WarehouseInventory.updateOne(
       { _id },
       {
-        quantity: quantity,
-        weight: weight,
-        originalPrice: originalPrice,
-        sellingPrice: sellingPrice,
-        barcodeId: barcodeId,
-        warehouseId: warehouseId,
-        itemId: itemId,
+        quantity,
+        weight,
+        originalPrice,
+        sellingPrice,
+        barcodeId,
+        warehouseId,
+        itemId,
+        types,
       }
     );
-    if (!updatedWarehouseInventory)
+    if (
+      updatedWarehouseInventory.acknowledged &&
+      updatedWarehouseInventory.modifiedCount == 0
+    )
       throw new Error("WarehouseInventory not found!");
     res.status(201).json({ data: updatedWarehouseInventory });
   } catch (error) {
