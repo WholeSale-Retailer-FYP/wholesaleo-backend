@@ -1,7 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import mongoose from "mongoose";
 import Item from "../models/Item";
-import { cloudinaryConfig } from "../config/cloudinaryConfig";
 import { UploadApiResponse, v2 as cloudinary } from "cloudinary";
 
 const createItem = async (req: Request, res: Response, next: NextFunction) => {
@@ -21,6 +20,25 @@ const createItem = async (req: Request, res: Response, next: NextFunction) => {
       name,
       itemCategoryId,
       image: uploadedFile.secure_url,
+    });
+    res.status(201).json({ data: item });
+  } catch (error) {
+    if (error instanceof Error)
+      res.status(500).json({ message: error.message });
+  }
+};
+
+const createItemFromImageLink = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const { name, itemCategoryId, image } = req.body;
+  try {
+    const item = await Item.create({
+      name,
+      itemCategoryId,
+      image,
     });
     res.status(201).json({ data: item });
   } catch (error) {
@@ -74,16 +92,44 @@ const readAllItem = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
-// todo: Handle image update. Delete previous image in Cloudinary andn then add new image to Cloudinary
+// todo: Handle image update. Delete previous image in Cloudinary andn test if edited image displaying properly
 const updateItem = async (req: Request, res: Response, next: NextFunction) => {
   try {
+    if (!req.file) res.status(500).json({ message: "No file present" });
+    let uploadedFile: UploadApiResponse;
+
+    uploadedFile = await cloudinary.uploader.upload(req.file!.path, {
+      folder: "items",
+      resource_type: "auto",
+      width: 350,
+      height: 350,
+    });
+
     const { _id, name, itemCategoryId } = req.body;
     const updatedItem = await Item.updateOne(
       { _id },
-      { name: name, itemCategoryId: itemCategoryId }
+      {
+        name: name,
+        itemCategoryId: itemCategoryId,
+        image: uploadedFile.secure_url,
+      }
     );
     if (!updatedItem) throw new Error("Item not found!");
     res.status(201).json({ data: updatedItem });
+  } catch (error) {
+    if (error instanceof Error)
+      res.status(500).json({ message: error.message });
+  }
+};
+
+const searchItem = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const search = req.params.query;
+    const items = await Item.find({
+      name: { $regex: search, $options: "i" },
+    });
+    if (!items) throw new Error("No items found!");
+    res.status(200).json({ data: items });
   } catch (error) {
     if (error instanceof Error)
       res.status(500).json({ message: error.message });
@@ -105,7 +151,9 @@ const deleteItem = async (req: Request, res: Response, next: NextFunction) => {
 
 export default {
   createItem,
+  createItemFromImageLink,
   readAllItem,
+  searchItem,
   readItemOfCategory,
   readItem,
   updateItem,

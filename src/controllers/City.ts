@@ -37,6 +37,21 @@ const readAllCity = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
+const getAllCitiesOfProvince = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const provinceId = req.params.provinceId;
+    const cities = await City.find({ provinceId: provinceId });
+    res.status(200).json({ data: cities });
+  } catch (error) {
+    if (error instanceof Error)
+      res.status(500).json({ message: error.message });
+  }
+};
+
 const updateCity = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { _id, name, provinceId } = req.body;
@@ -69,6 +84,7 @@ export default {
   createCity,
   readAllCity,
   readCity,
+  getAllCitiesOfProvince,
   updateCity,
   deleteCity,
 };

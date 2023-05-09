@@ -87,6 +87,42 @@ const readAllRetailerPurchaseData = async (
   }
 };
 
+const readDataOfPurchase = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const retailerPurchaseId = req.params.retailerPurchaseId;
+    const retailerPurchaseData = await RetailerPurchaseData.find({
+      retailerPurchaseId,
+    }).populate([
+      {
+        path: "retailerPurchaseId",
+        populate: {
+          path: "retailerId",
+          select: ["firstName", "lastName", "role"],
+        },
+      },
+      {
+        path: "warehouseInventoryId",
+        select: ["barcodeId", "sellingPrice"],
+        populate: {
+          path: "itemId",
+          select: ["name", "image"],
+        },
+      },
+    ]);
+    if (!retailerPurchaseData) {
+      throw new Error("RetailerPurchaseData Not Found");
+    }
+    res.status(200).json({ data: retailerPurchaseData });
+  } catch (error) {
+    if (error instanceof Error)
+      res.status(500).json({ message: error.message });
+  }
+};
+
 const updateRetailerPurchaseData = async (
   req: Request,
   res: Response,
@@ -129,6 +165,7 @@ export default {
   createRetailerPurchaseData,
   readAllRetailerPurchaseData,
   readRetailerPurchaseData,
+  readDataOfPurchase,
   updateRetailerPurchaseData,
   deleteRetailerPurchaseData,
 };

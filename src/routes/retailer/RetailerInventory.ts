@@ -10,6 +10,15 @@ router.get(
   controller.readRetailerInventoryOfRetailer
 );
 router.get("/get/", controller.readAllRetailerInventory);
+router.get(
+  "/get/DefaultAndCustom/retailer/:retailerId",
+  controller.readDefaultAndCustomInventory
+);
+router.get("/forecast/:retailerId/:numDays", controller.inventoryForecast);
+router.get(
+  "/forecast-detailed/:retailerId/:numDays",
+  controller.inventoryForecastDetailed
+);
 router.put("/update/", controller.updateRetailerInventory);
 router.delete(
   "/delete/:retailerInventoryId",

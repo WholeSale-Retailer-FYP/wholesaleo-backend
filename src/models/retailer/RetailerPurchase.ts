@@ -7,13 +7,15 @@ export enum OrderStatus {
   COMPLETED,
   CANCELLED,
 }
-// todo: do i need warehouseId?
+
 export interface IRetailerPurchase {
   datetime: Date;
   orderNumber: string;
   orderStatus: OrderStatus;
   retailerId: mongoose.Types.ObjectId;
-  //   warehouseId: mongoose.Types.ObjectId;
+  warehouseId: mongoose.Types.ObjectId;
+  numItems: number;
+  totalPrice: number;
 }
 
 export interface IRetailerPurchaseModel extends IRetailerPurchase, Document {}
@@ -31,11 +33,9 @@ const RetailerPurchaseSchema: Schema = new Schema({
     ref: "Retailer",
     required: true,
   },
-  //   warehouseId: {
-  //     type: Schema.Types.ObjectId,
-  //     ref: "Warehouse",
-  //     required: true,
-  //   },
+  numItems: { type: Number, default: 0, required: true },
+  warehouseId: { type: Schema.Types.ObjectId, ref: "Warehouse" },
+  totalPrice: { type: Number, default: 0, required: true },
 });
 
 export default mongoose.model<IRetailerPurchaseModel>(

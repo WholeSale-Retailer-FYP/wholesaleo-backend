@@ -1,7 +1,8 @@
 import { NextFunction, Request, Response } from "express";
 import mongoose from "mongoose";
-import ItemCategory from "../models/ItemCategory";
+import ItemCategory, { IItemCategory } from "../models/ItemCategory";
 import { UploadApiResponse, v2 as cloudinary } from "cloudinary";
+import CustomCategory from "../models/retailer/CustomCategory";
 
 const createItemCategory = async (
   req: Request,
@@ -23,6 +24,23 @@ const createItemCategory = async (
     const itemCategory = await ItemCategory.create({
       name,
       image: uploadedFile.secure_url,
+    });
+    res.status(201).json({ data: itemCategory });
+  } catch (error) {
+    if (error instanceof Error)
+      res.status(500).json({ message: error.message });
+  }
+};
+const createItemCategoryFromUrl = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const { name, image } = req.body;
+  try {
+    const itemCategory = await ItemCategory.create({
+      name,
+      image,
     });
     res.status(201).json({ data: itemCategory });
   } catch (error) {
@@ -57,6 +75,46 @@ const readAllItemCategory = async (
   try {
     const itemCategorys = await ItemCategory.find();
     res.status(200).json({ data: itemCategorys });
+  } catch (error) {
+    if (error instanceof Error)
+      res.status(500).json({ message: error.message });
+  }
+};
+
+const readDefaultAndCustomCategories = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { retailerId } = req.params;
+    var itemCategorys = await ItemCategory.find();
+    if (!itemCategorys) throw new Error("ItemCategory not found!");
+
+    const customCategoryOfRetailer = await CustomCategory.find({
+      retailerId,
+    });
+
+    if (!customCategoryOfRetailer)
+      throw new Error("Custom Category of Retailer not found!");
+
+    let allCategories = itemCategorys.map((itemCategory) => {
+      return {
+        ...itemCategory._doc,
+        custom: false,
+      };
+    });
+
+    let customCategories = customCategoryOfRetailer.map((customCategory) => {
+      return {
+        ...customCategory._doc,
+        custom: true,
+      };
+    });
+
+    allCategories.push(...customCategories);
+
+    res.status(200).json({ data: allCategories });
   } catch (error) {
     if (error instanceof Error)
       res.status(500).json({ message: error.message });
@@ -103,7 +161,9 @@ const deleteItemCategory = async (
 export default {
   createItemCategory,
   readAllItemCategory,
+  createItemCategoryFromUrl,
   readItemCategory,
+  readDefaultAndCustomCategories,
   updateItemCategory,
   deleteItemCategory,
 };

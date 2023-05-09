@@ -8,13 +8,11 @@ const createWarehouse = async (
   res: Response,
   next: NextFunction
 ) => {
-  const { name, cityId, regionId, provinceId, longitude, latitude } = req.body;
+  const { name, regionId, longitude, latitude } = req.body;
   try {
     const warehouse = await Warehouse.create({
       name,
-      cityId,
       regionId,
-      provinceId,
       longitude,
       latitude,
     });
@@ -92,15 +90,12 @@ const updateWarehouse = async (
   next: NextFunction
 ) => {
   try {
-    const { _id, name, cityId, regionId, provinceId, longitude, latitude } =
-      req.body;
+    const { _id, name, regionId, longitude, latitude } = req.body;
     const updatedWarehouse = await Warehouse.updateOne(
       { _id },
       {
         name: name,
-        cityId: cityId,
         regionId: regionId,
-        provinceId: provinceId,
         longitude: longitude,
         latitude: latitude,
       }

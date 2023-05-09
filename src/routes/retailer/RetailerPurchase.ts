@@ -5,6 +5,10 @@ const router = express.Router();
 
 router.post("/create", controller.createRetailerPurchase);
 router.get("/get/:retailerPurchaseId", controller.readRetailerPurchase);
+router.get(
+  "/get/retailer/:retailerId",
+  controller.readPurchasesOfSingleRetailer
+);
 router.get("/get/", controller.readAllRetailerPurchase);
 router.put("/update/", controller.updateRetailerPurchase);
 router.delete("/delete/:retailerPurchaseId", controller.deleteRetailerPurchase);

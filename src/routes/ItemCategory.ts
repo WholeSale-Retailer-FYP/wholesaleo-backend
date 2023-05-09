@@ -1,7 +1,7 @@
 import express from "express";
 import controller from "../controllers/ItemCategory";
 import { cloudinaryConfig } from "../config/cloudinaryConfig";
-import * as multerUploads from "../utils/multer";
+import * as multerUploads from "../middleware/multer";
 
 const router = express.Router();
 
@@ -11,8 +11,13 @@ router.post(
   multerUploads.multerUploads,
   controller.createItemCategory
 );
+router.post("/createFromUrl", controller.createItemCategoryFromUrl);
 router.get("/get/:itemCategoryId", controller.readItemCategory);
 router.get("/get/", controller.readAllItemCategory);
+router.get(
+  "/get/defaultAndCustom/:retailerId",
+  controller.readDefaultAndCustomCategories
+);
 router.put("/update/", controller.updateItemCategory);
 router.delete("/delete/:itemCategoryId", controller.deleteItemCategory);
 

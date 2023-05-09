@@ -1,7 +1,8 @@
 import mongoose, { Document, Schema } from "mongoose";
 
-enum Roles {
-  Manager = 1,
+export enum Roles {
+  Owner = 0,
+  Manager,
   Employee,
 }
 
@@ -12,6 +13,7 @@ export interface IRetailerEmployee {
   phoneNumber: string;
   password: string;
   role: Roles;
+  image: string;
   retailerId: mongoose.Types.ObjectId;
 }
 
@@ -29,6 +31,11 @@ const RetailerEmployeeSchema: Schema = new Schema(
       enum: Roles,
       default: Roles.Employee,
       required: true,
+    },
+    image: {
+      type: String,
+      default:
+        "https://res.cloudinary.com/dca8sskac/image/upload/v1679653632/defaultProfile_ae3kr1.png",
     },
     retailerId: {
       type: Schema.Types.ObjectId,

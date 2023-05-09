@@ -1,21 +1,20 @@
 import mongoose, { Document, Schema } from "mongoose";
-// TODO: add controller and route
 enum Status {
   InProgress = 1,
   Urgent,
   Complete,
 }
 
-export interface IRegion {
+export interface IComplaint {
   retailerId: string;
   warehouseId: mongoose.Types.ObjectId;
   status: Status;
   description: string;
 }
 
-export interface IRegionModel extends IRegion, Document {}
+export interface IComplaintModel extends IComplaint, Document {}
 
-const RegionSchema: Schema = new Schema({
+const ComplaintSchema: Schema = new Schema({
   retailerId: { type: Schema.Types.ObjectId, ref: "Retailer", required: true },
   warehouseId: {
     type: Schema.Types.ObjectId,
@@ -28,6 +27,7 @@ const RegionSchema: Schema = new Schema({
     default: Status.InProgress,
     required: true,
   },
+  description: { type: String, required: true },
 });
 
-export default mongoose.model<IRegionModel>("Region", RegionSchema);
+export default mongoose.model<IComplaintModel>("Complaint", ComplaintSchema);

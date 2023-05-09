@@ -7,7 +7,8 @@ export interface IWarehouseInventory {
   sellingPrice: number;
   barcodeId: string;
   warehouseId: mongoose.Types.ObjectId;
-  itemId: mongoose.Types.ObjectId;
+  itemId: mongoose.Types.ObjectId | any;
+  sectionId: mongoose.Types.ObjectId;
 }
 
 export interface IWarehouseInventoryModel

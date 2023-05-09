@@ -4,14 +4,14 @@ enum Roles {
   Manager = 1,
   Employee,
 }
-
 export interface IWarehouseEmployee {
   name: string;
   cnic: string;
   phoneNumber: string;
-  warehouseId: mongoose.Types.ObjectId;
   password: string;
   role: Roles;
+  email: string;
+  warehouseId: mongoose.Types.ObjectId;
 }
 
 export interface IWarehouseEmployeeModel extends IWarehouseEmployee, Document {}
@@ -27,6 +27,7 @@ const WarehouseEmployeeSchema: Schema = new Schema(
     phoneNumber: { type: String, required: true, unique: true },
     cnic: { type: String, required: true, unique: true },
     password: { type: String, required: true },
+    email: { type: String, required: true, unique: true },
     role: {
       type: Number,
       enum: Roles,

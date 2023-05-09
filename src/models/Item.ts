@@ -18,4 +18,6 @@ const ItemSchema: Schema = new Schema({
   },
 });
 
+ItemSchema.index({ name: "text" });
+
 export default mongoose.model<IItemModel>("Item", ItemSchema);
