@@ -220,7 +220,7 @@ const dashboardAnalytics = async (
       details.monthlyData[index].totalSales = data.totalSales;
     });
 
-    res.status(500).json({ data: details });
+    res.status(200).json({ data: details });
   } catch (error) {
     if (error instanceof Error)
       res.status(500).json({ message: error.message });

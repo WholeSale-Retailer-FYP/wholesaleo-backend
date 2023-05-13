@@ -1,12 +1,3 @@
 {
-    "type": "service_account",
-    "project_id": "wholesaleo-fyp",
-    "private_key_id": "3a9962a0bae8eb457f34e6b193161a4efd472d62",
-    "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvwIBADANBgkqhkiG9w0BAQEFAASCBKkwggSlAgEAAoIBAQDPVK0S2dJKsBd5\nePPT4YZhvNu2cXLUx4oGf59nMUFp8hCOLwzd6nVwKsh94O9/SFayr5em8XcyQYMs\nUezC8aWaz6VbWFGBb9GMigXR9MWlSzvE1j/zIWZMRGkxQnVo5VhouOP/JR9bDtkA\nMrnis2SWmO/0qeXLKDqho02FDZPG45zJObd78xJ+1pNFo14XHxRVRlGe/IT6QqQt\nPsKD9OgW1InEa2ipYzia5oKhCXShC4yX5X/kyA2Vyy5ESBk6BLsVvGX/8dMVEEX6\nPv0UHqdFBKtHJerzTAH3NC9atN+bdhSWp9MGx1VTG8RFxClWuXpUeL2pqTS9jtgN\noroXzeO/AgMBAAECggEAQ47Y8pqNno6wp4FVGkaTjkeG5HUlMNZwUFvHqk1vfkFF\nSb9lFu6uI8WdHP9tqvD8Zy82YEywRWz5fDiZyJALIV3mCNTHgkDYbE4RRW/X81uH\nd0VFA0lv1ww3prh8H5kT7NPKXzpOdFJrPVhKH+fKsBPXpMazvTY3nLHksaVR8O1l\nR+qfcgLfbdoNS0I2bJQq6Kd2nXkx3F6UkLQA5S0QTnLLh+0Pr3Iu7GEeKk3FxtgQ\nQnrMIWnevXxAyEYKb9y5lfB0Wo99ISI/35nA2eIm+Wu+guyhE/VIfhtsVY6Hj5sY\nV/2YWlzrvRQySd74qRqzmIItMdvnPJDLe8W+vfEoSQKBgQD8QP+vRhKqwYHxis2L\nocqhsGNUOXMVoSGm1Qm4KIoIUvGn7Jv70n4j35+bP2p3nuT96/IMLnH1jAINwBSo\nlYD3+mSbhqWEqwBfm1BTsDkqMqEB1enSKjbZ7RwzUNevmVprsRZtnZpsRxz0hFv6\ngRop75rB53g/p2GHLEzZB2xWvQKBgQDSaORET0+ZWTbphWxkmrmMG73TCEw+viUd\nPaKmY3Mm4f+a80qOh/f1FsR+Zh4CpbPSEp0xOam1BsntT2J71BSX+ogiYV9Meg+y\nLXmYXCDXjI+Dn+z3FKZJn+gTbVEPeL5iElfcyT4Zg32jaWa2zKm/Pi9ldGzPuhkg\nuvWuxE66KwKBgQCyIBvs4uhvl7FwpPk8LoVt46ZgZSj1DxE6Q5lXZ5kBA8ENOTF0\ng1D7d/+2mvNNgPBmteP34hwqrjENEKQF33xwn2nHwS7EHhRnbr8sOXZEa/fx2eIA\nvDp7bMnLGr0TjJCjFyulP/M5noW9zHE+1UdqcX2wiwkIueNOlmO1pV5FaQKBgQCi\nQTTV4Hs3e+62gacmpZI0Eyh81kdFkwe31tHYkZQ5BcpASSDTbNKvc1EvT7wQuotC\nkgwZ66eM66FHmRIO/2qqEA5uxLvik7YK5rp/3XuN/Nym2eq4VnotCFzErmX2Elxt\n8EtE/QMgVZ/LJfqJOKYlzeRqzi8iuRWrgcD3dnZnZQKBgQDI+Un+CFPkNJqHjxxY\nl9z6+s+wRuzGUwlH7g276eeTUaRu2ox2mRpumj0Tbm8WkQyub+T5a5XW34Ol6v4w\nZhIn2kOb9nM8eCWohy1xTLz8ujiA4wnXLxoxfnQeoIf5Zp839E9WPemHtCXqEr3o\ndp4ZsiGpJXuKDy+1JEMH3MAQIQ==\n-----END PRIVATE KEY-----\n",
-    "client_email": "mazin-804@wholesaleo-fyp.iam.gserviceaccount.com",
-    "client_id": "107943163585587456049",
-    "auth_uri": "https://accounts.google.com/o/oauth2/auth",
-    "token_uri": "https://oauth2.googleapis.com/token",
-    "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
-    "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/mazin-804%40wholesaleo-fyp.iam.gserviceaccount.com"
+
 }

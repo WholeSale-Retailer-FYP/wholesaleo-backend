@@ -149,6 +149,23 @@ const readAllRetailer = async (
   }
 };
 
+// read unverified retailers
+const readUnverifiedRetailers = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const retailers = await Retailer.find({ verified: false }).populate([
+      "regionId",
+    ]);
+    res.status(200).json({ data: retailers });
+  } catch (error) {
+    if (error instanceof Error)
+      res.status(500).json({ message: error.message });
+  }
+};
+
 const verifyRetailer = async (
   req: Request,
   res: Response,
@@ -290,6 +307,7 @@ export default {
   createRetailerAndAdmin,
   readAllRetailer,
   readRetailer,
+  readUnverifiedRetailers,
   verifyRetailer,
   updateRetailer,
   deleteRetailer,
