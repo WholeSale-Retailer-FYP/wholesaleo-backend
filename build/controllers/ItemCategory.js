@@ -14,6 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const ItemCategory_1 = __importDefault(require("../models/ItemCategory"));
 const cloudinary_1 = require("cloudinary");
+const CustomCategory_1 = __importDefault(require("../models/retailer/CustomCategory"));
 const createItemCategory = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const { name } = req.body;
     try {
@@ -29,6 +30,20 @@ const createItemCategory = (req, res, next) => __awaiter(void 0, void 0, void 0,
         const itemCategory = yield ItemCategory_1.default.create({
             name,
             image: uploadedFile.secure_url,
+        });
+        res.status(201).json({ data: itemCategory });
+    }
+    catch (error) {
+        if (error instanceof Error)
+            res.status(500).json({ message: error.message });
+    }
+});
+const createItemCategoryFromUrl = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const { name, image } = req.body;
+    try {
+        const itemCategory = yield ItemCategory_1.default.create({
+            name,
+            image,
         });
         res.status(201).json({ data: itemCategory });
     }
@@ -55,6 +70,31 @@ const readAllItemCategory = (req, res, next) => __awaiter(void 0, void 0, void 0
     try {
         const itemCategorys = yield ItemCategory_1.default.find();
         res.status(200).json({ data: itemCategorys });
+    }
+    catch (error) {
+        if (error instanceof Error)
+            res.status(500).json({ message: error.message });
+    }
+});
+const readDefaultAndCustomCategories = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { retailerId } = req.params;
+        var itemCategorys = yield ItemCategory_1.default.find();
+        if (!itemCategorys)
+            throw new Error("ItemCategory not found!");
+        const customCategoryOfRetailer = yield CustomCategory_1.default.find({
+            retailerId,
+        });
+        if (!customCategoryOfRetailer)
+            throw new Error("Custom Category of Retailer not found!");
+        let allCategories = itemCategorys.map((itemCategory) => {
+            return Object.assign(Object.assign({}, itemCategory._doc), { custom: false });
+        });
+        let customCategories = customCategoryOfRetailer.map((customCategory) => {
+            return Object.assign(Object.assign({}, customCategory._doc), { custom: true });
+        });
+        allCategories.push(...customCategories);
+        res.status(200).json({ data: allCategories });
     }
     catch (error) {
         if (error instanceof Error)
@@ -91,7 +131,9 @@ const deleteItemCategory = (req, res, next) => __awaiter(void 0, void 0, void 0,
 exports.default = {
     createItemCategory,
     readAllItemCategory,
+    createItemCategoryFromUrl,
     readItemCategory,
+    readDefaultAndCustomCategories,
     updateItemCategory,
     deleteItemCategory,
 };

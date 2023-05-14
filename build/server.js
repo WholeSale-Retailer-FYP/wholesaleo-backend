@@ -3,22 +3,25 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const express_1 = __importDefault(require("express"));
 const http_1 = __importDefault(require("http"));
 const mongoose_1 = __importDefault(require("mongoose"));
 const config_1 = require("./config/config");
 const Logging_1 = __importDefault(require("./library/Logging"));
+const express_1 = __importDefault(require("express"));
 const Province_1 = __importDefault(require("./routes/Province"));
 const City_1 = __importDefault(require("./routes/City"));
 const Region_1 = __importDefault(require("./routes/Region"));
 const ItemCategory_1 = __importDefault(require("./routes/ItemCategory"));
 const Item_1 = __importDefault(require("./routes/Item"));
+const ItemType_1 = __importDefault(require("./routes/ItemType"));
 const Complaint_1 = __importDefault(require("./routes/Complaint"));
 const RetailerCategory_1 = __importDefault(require("./routes/RetailerCategory"));
+const AdminEmployee_1 = __importDefault(require("./routes/admin/AdminEmployee"));
 const Warehouse_1 = __importDefault(require("./routes/warehouse/Warehouse"));
 const WarehouseEmployee_1 = __importDefault(require("./routes/warehouse/WarehouseEmployee"));
 const WarehouseInventory_1 = __importDefault(require("./routes/warehouse/WarehouseInventory"));
 const Section_1 = __importDefault(require("./routes/warehouse/Section"));
+const Sales_1 = __importDefault(require("./routes/warehouse/Sales"));
 const Retailer_1 = __importDefault(require("./routes/retailer/Retailer"));
 const RetailerEmployee_1 = __importDefault(require("./routes/retailer/RetailerEmployee"));
 const RetailerInventory_1 = __importDefault(require("./routes/retailer/RetailerInventory"));
@@ -27,6 +30,8 @@ const RetailerSaleData_1 = __importDefault(require("./routes/retailer/RetailerSa
 const RetailerPurchase_1 = __importDefault(require("./routes/retailer/RetailerPurchase"));
 const RetailerPurchaseData_1 = __importDefault(require("./routes/retailer/RetailerPurchaseData"));
 const RetailerFavorites_1 = __importDefault(require("./routes/retailer/RetailerFavorites"));
+const CustomCategory_1 = __importDefault(require("./routes/retailer/CustomCategory"));
+const CustomItem_1 = __importDefault(require("./routes/retailer/CustomItem"));
 const router = (0, express_1.default)();
 /** Connect to Mongo */
 mongoose_1.default
@@ -41,11 +46,15 @@ const StartServer = () => {
     /** Log the request */
     router.use((req, res, next) => {
         /** Log the req */
-        Logging_1.default.info(`Incomming - METHOD: [${req.method}] - URL: [${req.url}] - IP: [${req.socket.remoteAddress}]`);
-        res.on("finish", () => {
-            /** Log the res */
-            Logging_1.default.info(`Result - METHOD: [${req.method}] - URL: [${req.url}] - IP: [${req.socket.remoteAddress}] - STATUS: [${res.statusCode}]`);
-        });
+        // Logging.info(
+        //   `Incomming - METHOD: [${req.method}] - URL: [${req.url}] - IP: [${req.socket.remoteAddress}]`
+        // );
+        // res.on("finish", () => {
+        //   /** Log the res */
+        //   Logging.info(
+        //     `Result - METHOD: [${req.method}] - URL: [${req.url}] - IP: [${req.socket.remoteAddress}] - STATUS: [${res.statusCode}]`
+        //   );
+        // });
         next();
     });
     router.use(express_1.default.urlencoded({ extended: true }));
@@ -66,11 +75,13 @@ const StartServer = () => {
     router.use("/region", Region_1.default);
     router.use("/itemCategory", ItemCategory_1.default);
     router.use("/item", Item_1.default);
+    router.use("/itemType", ItemType_1.default);
     router.use("/complaint", Complaint_1.default);
-    router.use("/retailerCategory", RetailerCategory_1.default);
+    router.use("/adminEmployee", AdminEmployee_1.default);
     router.use("/warehouse", Warehouse_1.default);
     router.use("/warehouseEmployee", WarehouseEmployee_1.default);
     router.use("/warehouseInventory", WarehouseInventory_1.default);
+    router.use("/warehouseSales", Sales_1.default);
     router.use("/section", Section_1.default);
     router.use("/retailer", Retailer_1.default);
     router.use("/retailerEmployee", RetailerEmployee_1.default);
@@ -80,6 +91,9 @@ const StartServer = () => {
     router.use("/retailerPurchase", RetailerPurchase_1.default);
     router.use("/retailerPurchaseData", RetailerPurchaseData_1.default);
     router.use("/retailerFavorites", RetailerFavorites_1.default);
+    router.use("/retailerCategory", RetailerCategory_1.default);
+    router.use("/customCategory", CustomCategory_1.default);
+    router.use("/customItem", CustomItem_1.default);
     /** Healthcheck */
     router.get("/ping", (req, res, next) => res.status(200).json({ hello: "world" }));
     /** Error handling */

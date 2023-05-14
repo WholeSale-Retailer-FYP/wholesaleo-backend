@@ -36,6 +36,6 @@ const WarehouseInventorySchema = new mongoose_1.Schema({
         ref: "Warehouse",
     },
     itemId: { type: mongoose_1.Schema.Types.ObjectId, required: true, ref: "Item" },
-    sectionId: { type: mongoose_1.Schema.Types.ObjectId, required: true, ref: "Section" },
+    types: [{ type: Object, required: true }],
 });
 exports.default = mongoose_1.default.model("WarehouseInventory", WarehouseInventorySchema);

@@ -43,6 +43,10 @@ const RetailerEmployeeSchema = new mongoose_1.Schema({
         default: Roles.Employee,
         required: true,
     },
+    image: {
+        type: String,
+        default: "https://res.cloudinary.com/dca8sskac/image/upload/v1679653632/defaultProfile_ae3kr1.png",
+    },
     retailerId: {
         type: mongoose_1.Schema.Types.ObjectId,
         required: true,

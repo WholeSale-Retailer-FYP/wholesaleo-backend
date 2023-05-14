@@ -26,8 +26,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.OrderStatus = void 0;
 const mongoose_1 = __importStar(require("mongoose"));
 const uuid_1 = require("uuid");
-// TODO: Shouldnt this file be RetailerPurchaseData.ts?
-// and shouldnt we be using warehouseId ?
 var OrderStatus;
 (function (OrderStatus) {
     OrderStatus[OrderStatus["PENDING"] = 0] = "PENDING";
@@ -48,10 +46,8 @@ const RetailerPurchaseSchema = new mongoose_1.Schema({
         ref: "Retailer",
         required: true,
     },
-    //   warehouseId: {
-    //     type: Schema.Types.ObjectId,
-    //     ref: "Warehouse",
-    //     required: true,
-    //   },
+    numItems: { type: Number, default: 0, required: true },
+    warehouseId: { type: mongoose_1.Schema.Types.ObjectId, ref: "Warehouse" },
+    totalPrice: { type: Number, default: 0, required: true },
 });
 exports.default = mongoose_1.default.model("RetailerPurchase", RetailerPurchaseSchema);

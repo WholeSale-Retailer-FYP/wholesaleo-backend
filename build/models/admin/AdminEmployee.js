@@ -26,27 +26,19 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
 var Roles;
 (function (Roles) {
-    Roles[Roles["Manager"] = 1] = "Manager";
-    Roles[Roles["Employee"] = 2] = "Employee";
+    Roles[Roles["TOP_ADMIN"] = 1] = "TOP_ADMIN";
+    Roles[Roles["PROVINCE_ADMIN"] = 2] = "PROVINCE_ADMIN";
+    Roles[Roles["CITY_ADMIN"] = 3] = "CITY_ADMIN";
 })(Roles || (Roles = {}));
-const WarehouseEmployeeSchema = new mongoose_1.Schema({
+const AdminEmployeeSchema = new mongoose_1.Schema({
+    // _id: { type: Schema.Types.ObjectId, auto: true },
     name: { type: String, required: true },
-    warehouseId: {
-        type: mongoose_1.Schema.Types.ObjectId,
-        required: true,
-        ref: "Warehouse",
-    },
-    phoneNumber: { type: String, required: true, unique: true },
-    cnic: { type: String, required: true, unique: true },
+    email: { type: String, required: true },
     password: { type: String, required: true },
-    email: { type: String, required: true, unique: true },
-    role: {
-        type: Number,
-        enum: Roles,
-        default: Roles.Employee,
-        required: true,
-    },
-}, {
-    versionKey: false,
+    role: { type: Number, enum: Roles, required: true },
+    cnic: { type: String, required: true },
+    provinceId: { type: mongoose_1.Schema.Types.ObjectId, ref: "Province" },
+    cityId: { type: mongoose_1.Schema.Types.ObjectId, ref: "City" },
+    regionId: { type: mongoose_1.Schema.Types.ObjectId, ref: "Region" },
 });
-exports.default = mongoose_1.default.model("WarehouseEmployee", WarehouseEmployeeSchema);
+exports.default = mongoose_1.default.model("AdminEmployee", AdminEmployeeSchema);

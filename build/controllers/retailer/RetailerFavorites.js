@@ -14,11 +14,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const RetailerFavorites_1 = __importDefault(require("../../models/retailer/RetailerFavorites"));
 const createRetailerFavorites = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    const { retailerId, warehouseId } = req.body;
+    const { retailerId, warehouseInventoryId } = req.body;
     try {
         const retailerFavorites = yield RetailerFavorites_1.default.create({
             retailerId,
-            warehouseId,
+            warehouseInventoryId,
         });
         res.status(201).json({ data: retailerFavorites });
     }
@@ -30,7 +30,9 @@ const createRetailerFavorites = (req, res, next) => __awaiter(void 0, void 0, vo
 const readRetailerFavorites = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const retailerFavoritesId = req.params.retailerFavoritesId;
-        const retailerFavorites = yield RetailerFavorites_1.default.findById(retailerFavoritesId);
+        const retailerFavorites = yield RetailerFavorites_1.default.findById(retailerFavoritesId)
+            .populate("retailerId")
+            .populate("warehouseInventoryId");
         if (!retailerFavorites) {
             throw new Error("RetailerFavorites Not Found");
         }
@@ -43,8 +45,24 @@ const readRetailerFavorites = (req, res, next) => __awaiter(void 0, void 0, void
 });
 const readAllRetailerFavorites = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const retailerFavoritess = yield RetailerFavorites_1.default.find();
+        const retailerFavoritess = yield RetailerFavorites_1.default.find().populate("warehouseInventoryId");
         res.status(200).json({ data: retailerFavoritess });
+    }
+    catch (error) {
+        if (error instanceof Error)
+            res.status(500).json({ message: error.message });
+    }
+});
+const readFavoritesOfRetailer = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const retailerId = req.params.retailerId;
+        const retailerFavorites = yield RetailerFavorites_1.default.find({
+            retailerId,
+        }).populate([
+            { path: "retailerId" },
+            { path: "warehouseInventoryId", populate: { path: "itemId" } },
+        ]);
+        res.status(200).json({ data: retailerFavorites });
     }
     catch (error) {
         if (error instanceof Error)
@@ -53,8 +71,8 @@ const readAllRetailerFavorites = (req, res, next) => __awaiter(void 0, void 0, v
 });
 const updateRetailerFavorites = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { _id, name } = req.body;
-        const updatedRetailerFavorites = yield RetailerFavorites_1.default.updateOne({ _id }, { name: name });
+        const { _id, retailerId, warehouseInventoryId } = req.body;
+        const updatedRetailerFavorites = yield RetailerFavorites_1.default.updateOne({ _id }, { retailerId, warehouseInventoryId });
         if (!updatedRetailerFavorites)
             throw new Error("RetailerFavorites not found!");
         res.status(201).json({ data: updatedRetailerFavorites });
@@ -81,6 +99,7 @@ exports.default = {
     createRetailerFavorites,
     readAllRetailerFavorites,
     readRetailerFavorites,
+    readFavoritesOfRetailer,
     updateRetailerFavorites,
     deleteRetailerFavorites,
 };

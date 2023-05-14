@@ -24,29 +24,8 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
-var Roles;
-(function (Roles) {
-    Roles[Roles["Manager"] = 1] = "Manager";
-    Roles[Roles["Employee"] = 2] = "Employee";
-})(Roles || (Roles = {}));
-const WarehouseEmployeeSchema = new mongoose_1.Schema({
+const ItemTypeSchema = new mongoose_1.Schema({
     name: { type: String, required: true },
-    warehouseId: {
-        type: mongoose_1.Schema.Types.ObjectId,
-        required: true,
-        ref: "Warehouse",
-    },
-    phoneNumber: { type: String, required: true, unique: true },
-    cnic: { type: String, required: true, unique: true },
-    password: { type: String, required: true },
-    email: { type: String, required: true, unique: true },
-    role: {
-        type: Number,
-        enum: Roles,
-        default: Roles.Employee,
-        required: true,
-    },
-}, {
-    versionKey: false,
+    quantity: { type: Number, required: true },
 });
-exports.default = mongoose_1.default.model("WarehouseEmployee", WarehouseEmployeeSchema);
+exports.default = mongoose_1.default.model("ItemType", ItemTypeSchema);

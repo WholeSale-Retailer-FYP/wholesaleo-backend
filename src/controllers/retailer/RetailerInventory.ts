@@ -182,18 +182,18 @@ interface bigQueryResponse {
       };
 }
 
-// const credentials = {
-//   type: process.env.TYPE,
-//   project_id: process.env.PROJECT_ID,
-//   private_key_id: process.env.PRIVATE_KEY_ID,
-//   private_key: process.env.PRIVATE_KEY,
-//   client_email: process.env.CLIENT_EMAIL,
-//   client_id: process.env.CLIENT_ID,
-//   auth_uri: process.env.AUTH_URI,
-//   token_uri: process.env.TOKEN_URI,
-//   auth_provider_x509_cert_url: process.env.AUTH_PROVIDER,
-//   client_x509_cert_url: process.env.CLIENT_URL,
-// };
+const credentials = {
+  type: process.env.TYPE,
+  project_id: process.env.PROJECT_ID,
+  private_key_id: process.env.PRIVATE_KEY_ID,
+  private_key: process.env.PRIVATE_KEY,
+  client_email: process.env.CLIENT_EMAIL,
+  client_id: process.env.CLIENT_ID,
+  auth_uri: process.env.AUTH_URI,
+  token_uri: process.env.TOKEN_URI,
+  auth_provider_x509_cert_url: process.env.AUTH_PROVIDER,
+  client_x509_cert_url: process.env.CLIENT_URL,
+};
 
 const inventoryForecast = async (
   req: Request,
@@ -203,8 +203,8 @@ const inventoryForecast = async (
   try {
     const { retailerId, numDays } = req.params;
     const bq = new BigQuery({
-      // credentials,
-      keyFilename: "src/config/wholesaleo-fyp-3a9962a0bae8.json",
+      credentials: JSON.parse(process.env.GOOGLE_BIG_QUERY_CREDENTIALS!),
+      // keyFilename: "src/config/wholesaleo-fyp-3a9962a0bae8.json",
       projectId: "wholesaleo-fyp",
     });
 
@@ -291,8 +291,7 @@ const inventoryForecastDetailed = async (
   try {
     const { retailerId, numDays } = req.params;
     const bq = new BigQuery({
-      // credentials,
-      keyFilename: "src/config/wholesaleo-fyp-3a9962a0bae8.json",
+      credentials: JSON.parse(process.env.GOOGLE_BIG_QUERY_CREDENTIALS!),
       projectId: "wholesaleo-fyp",
     });
 

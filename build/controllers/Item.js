@@ -15,7 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const Item_1 = __importDefault(require("../models/Item"));
 const cloudinary_1 = require("cloudinary");
 const createItem = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    const { name, itemCategoryId } = req.body;
+    const { name, itemCategoryId, types } = req.body;
     try {
         if (!req.file)
             res.status(500).json({ message: "No file present" });
@@ -26,10 +26,28 @@ const createItem = (req, res, next) => __awaiter(void 0, void 0, void 0, functio
             width: 350,
             height: 350,
         });
+        console.log(types);
         const item = yield Item_1.default.create({
             name,
             itemCategoryId,
             image: uploadedFile.secure_url,
+            types,
+        });
+        res.status(201).json({ data: item });
+    }
+    catch (error) {
+        if (error instanceof Error)
+            res.status(500).json({ message: error.message });
+    }
+});
+const createItemFromImageLink = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const { name, itemCategoryId, image, types } = req.body;
+    try {
+        const item = yield Item_1.default.create({
+            name,
+            itemCategoryId,
+            image,
+            types,
         });
         res.status(201).json({ data: item });
     }
@@ -88,15 +106,31 @@ const updateItem = (req, res, next) => __awaiter(void 0, void 0, void 0, functio
             width: 350,
             height: 350,
         });
-        const { _id, name, itemCategoryId } = req.body;
+        const { _id, name, itemCategoryId, types } = req.body;
         const updatedItem = yield Item_1.default.updateOne({ _id }, {
-            name: name,
-            itemCategoryId: itemCategoryId,
+            name,
+            itemCategoryId,
             image: uploadedFile.secure_url,
+            types,
         });
         if (!updatedItem)
             throw new Error("Item not found!");
         res.status(201).json({ data: updatedItem });
+    }
+    catch (error) {
+        if (error instanceof Error)
+            res.status(500).json({ message: error.message });
+    }
+});
+const searchItem = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const search = req.params.query;
+        const items = yield Item_1.default.find({
+            name: { $regex: search, $options: "i" },
+        });
+        if (!items)
+            throw new Error("No items found!");
+        res.status(200).json({ data: items });
     }
     catch (error) {
         if (error instanceof Error)
@@ -118,7 +152,9 @@ const deleteItem = (req, res, next) => __awaiter(void 0, void 0, void 0, functio
 });
 exports.default = {
     createItem,
+    createItemFromImageLink,
     readAllItem,
+    searchItem,
     readItemOfCategory,
     readItem,
     updateItem,

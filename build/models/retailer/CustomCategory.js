@@ -24,29 +24,13 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
-var Roles;
-(function (Roles) {
-    Roles[Roles["Manager"] = 1] = "Manager";
-    Roles[Roles["Employee"] = 2] = "Employee";
-})(Roles || (Roles = {}));
-const WarehouseEmployeeSchema = new mongoose_1.Schema({
+const CustomCategorySchema = new mongoose_1.Schema({
+    _id: { type: mongoose_1.Schema.Types.ObjectId, auto: true },
     name: { type: String, required: true },
-    warehouseId: {
-        type: mongoose_1.Schema.Types.ObjectId,
-        required: true,
-        ref: "Warehouse",
+    retailerId: { type: mongoose_1.Schema.Types.ObjectId, ref: "Retailer", required: true },
+    image: {
+        type: String,
+        default: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTaxJvY4-LsDnXKj22dHmIUWHUWYdpe3L018UL81t5p9w&s",
     },
-    phoneNumber: { type: String, required: true, unique: true },
-    cnic: { type: String, required: true, unique: true },
-    password: { type: String, required: true },
-    email: { type: String, required: true, unique: true },
-    role: {
-        type: Number,
-        enum: Roles,
-        default: Roles.Employee,
-        required: true,
-    },
-}, {
-    versionKey: false,
 });
-exports.default = mongoose_1.default.model("WarehouseEmployee", WarehouseEmployeeSchema);
+exports.default = mongoose_1.default.model("CustomCategory", CustomCategorySchema);

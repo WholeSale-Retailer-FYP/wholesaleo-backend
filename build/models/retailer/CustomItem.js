@@ -24,29 +24,24 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
-var Roles;
-(function (Roles) {
-    Roles[Roles["Manager"] = 1] = "Manager";
-    Roles[Roles["Employee"] = 2] = "Employee";
-})(Roles || (Roles = {}));
-const WarehouseEmployeeSchema = new mongoose_1.Schema({
+const CustomItemSchema = new mongoose_1.Schema({
+    _id: { type: mongoose_1.Schema.Types.ObjectId, auto: true },
     name: { type: String, required: true },
-    warehouseId: {
+    image: {
+        type: String,
+        required: true,
+        default: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT2YQz36i4j0vszGg7Tlyo5kDPUEmcSmAjtJi7BetjBwh0ufwy1tVlsmIvc3o8wwWn0AY0&usqp=CAU",
+    },
+    weight: { type: Number, required: true },
+    description: { type: String, required: true },
+    sellingPrice: { type: Number, required: true },
+    originalPrice: { type: Number, required: true },
+    quantity: { type: Number, required: true },
+    retailerId: { type: mongoose_1.Schema.Types.ObjectId, ref: "Retailer", required: true },
+    customCategoryId: {
         type: mongoose_1.Schema.Types.ObjectId,
-        required: true,
-        ref: "Warehouse",
-    },
-    phoneNumber: { type: String, required: true, unique: true },
-    cnic: { type: String, required: true, unique: true },
-    password: { type: String, required: true },
-    email: { type: String, required: true, unique: true },
-    role: {
-        type: Number,
-        enum: Roles,
-        default: Roles.Employee,
+        ref: "CustomCategory",
         required: true,
     },
-}, {
-    versionKey: false,
 });
-exports.default = mongoose_1.default.model("WarehouseEmployee", WarehouseEmployeeSchema);
+exports.default = mongoose_1.default.model("CustomItem", CustomItemSchema);

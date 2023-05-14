@@ -38,6 +38,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importDefault(require("mongoose"));
 const Retailer_1 = __importDefault(require("../../models/retailer/Retailer"));
 const RetailerEmployee_1 = __importStar(require("../../models/retailer/RetailerEmployee"));
+const RetailerPurchase_1 = __importDefault(require("../../models/retailer/RetailerPurchase"));
+const RetailerSaleData_1 = __importDefault(require("../../models/retailer/RetailerSaleData"));
 const bcrypt = require("bcrypt");
 const createRetailer = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const { shopName, postalCode, latitude, longitude, address, regionId, warehouseId, amountPayable, shopSize, } = req.body;
@@ -132,6 +134,19 @@ const readAllRetailer = (req, res, next) => __awaiter(void 0, void 0, void 0, fu
             res.status(500).json({ message: error.message });
     }
 });
+// read unverified retailers
+const readUnverifiedRetailers = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const retailers = yield Retailer_1.default.find({ verified: false }).populate([
+            "regionId",
+        ]);
+        res.status(200).json({ data: retailers });
+    }
+    catch (error) {
+        if (error instanceof Error)
+            res.status(500).json({ message: error.message });
+    }
+});
 const verifyRetailer = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { _id } = req.body;
@@ -183,12 +198,54 @@ const deleteRetailer = (req, res, next) => __awaiter(void 0, void 0, void 0, fun
             res.status(500).json({ message: error.message });
     }
 });
+const dashboardAnalytics = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const retailerId = req.params.retailerId;
+        let analytics = {
+            accountPayable: 0,
+            totalOrders: 0,
+            totalSalesCount: 0,
+            totalSalesAmount: 0,
+            totalEmployees: 0,
+        };
+        const retailer = yield Retailer_1.default.findById(retailerId);
+        if (!retailer)
+            throw new Error("Retailer Not Found");
+        analytics.accountPayable = retailer.amountPayable;
+        // get sales of retailer
+        const retailerSales = yield RetailerSaleData_1.default.find({ retailerId }).populate("retailerInventoryId");
+        if (retailerSales) {
+            analytics.totalSalesCount = retailerSales.length;
+            // TODO: get retailer sales amount
+            // const copy = retailerSales as any;
+            // analytics.totalSalesAmount = copy.reduce(
+            //   (acc: any, curr: any) => acc + curr.retailerInventoryId.sellingPrice,
+            //   0
+            // );
+        }
+        // get employees of retailer
+        const employees = yield RetailerEmployee_1.default.find({ retailerId });
+        if (RetailerEmployee_1.default)
+            analytics.totalEmployees = employees.length;
+        // get orders of retailer
+        const retailerPurchase = yield RetailerPurchase_1.default.find({ retailerId });
+        if (retailerPurchase)
+            analytics.totalOrders = retailerPurchase.length;
+        res.status(200).json({ data: analytics });
+    }
+    catch (error) {
+        if (error instanceof Error)
+            res.status(500).json({ message: error.message });
+    }
+});
 exports.default = {
     createRetailer,
     createRetailerAndAdmin,
     readAllRetailer,
     readRetailer,
+    readUnverifiedRetailers,
     verifyRetailer,
     updateRetailer,
     deleteRetailer,
+    dashboardAnalytics,
 };
