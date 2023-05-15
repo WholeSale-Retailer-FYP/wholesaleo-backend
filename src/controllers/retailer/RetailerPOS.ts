@@ -121,7 +121,7 @@ const updateRetailerPOS = async (
     const { _id, retailerEmployeeId } = req.body;
     const updatedRetailerPOS = await RetailerPOS.updateOne(
       { _id },
-      { retailerEmployeeId: retailerEmployeeId }
+      { retailerEmployeeId }
     );
     if (!updatedRetailerPOS) throw new Error("RetailerPOS not found!");
     res.status(201).json({ data: updatedRetailerPOS });

@@ -115,6 +115,7 @@ const updateCustomItemById = async (
     quantity,
     retailerId,
     customCategoryId,
+    cartonSize,
   } = req.body;
   try {
     const customItem = await CustomItem.findByIdAndUpdate(_id, {
@@ -127,6 +128,7 @@ const updateCustomItemById = async (
       quantity,
       retailerId,
       customCategoryId,
+      cartonSize,
     });
     if (!customItem) throw new Error("Custom Category not found!");
     res.status(200).json({ data: customItem });
@@ -164,6 +166,7 @@ export function convertCustomItemToDefaultItem(items: ICustomItem[]) {
       originalPrice,
       description,
       customCategoryId,
+      cartonSize,
     } = item;
 
     let warehouseInventoryId: any = {};
@@ -175,20 +178,12 @@ export function convertCustomItemToDefaultItem(items: ICustomItem[]) {
       name,
       image,
       description,
+      cartonSize,
       itemCategoryId: {
         _id: customCategoryId == null ? "x" : customCategoryName._id,
         name: customCategoryName == null ? "x" : customCategoryName.name,
       },
     };
-
-    // if (customCategoryId == null) {
-    //   console.log("here");
-    //   warehouseInventoryId.itemId.categoryId._id = "x";
-    //   warehouseInventoryId.itemId.categoryId.name = "X";
-    // } else {
-    //   warehouseInventoryId.itemId.categoryId._id = customCategoryId._id;
-    //   warehouseInventoryId.itemId.categoryId.name = customCategoryName.name;
-    // }
 
     return {
       _id,

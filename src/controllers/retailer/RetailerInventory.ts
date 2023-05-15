@@ -77,7 +77,7 @@ const readRetailerInventoryOfRetailer = async (
       {
         path: "warehouseInventoryId",
         select: "weight",
-        populate: { path: "itemId", select: ["name", "image"] },
+        populate: { path: "itemId", select: ["name", "image", "cartonSize"] },
       },
     ]);
 
@@ -101,7 +101,7 @@ const readAllRetailerInventory = async (
       {
         path: "warehouseInventoryId",
         select: "weight",
-        populate: { path: "itemId", select: ["name", "image"] },
+        populate: { path: "itemId", select: ["name", "image", "cartonSize"] },
       },
       { path: "retailerId", select: "shopName" },
     ]);
@@ -182,19 +182,6 @@ interface bigQueryResponse {
       };
 }
 
-const credentials = {
-  type: process.env.TYPE,
-  project_id: process.env.PROJECT_ID,
-  private_key_id: process.env.PRIVATE_KEY_ID,
-  private_key: process.env.PRIVATE_KEY,
-  client_email: process.env.CLIENT_EMAIL,
-  client_id: process.env.CLIENT_ID,
-  auth_uri: process.env.AUTH_URI,
-  token_uri: process.env.TOKEN_URI,
-  auth_provider_x509_cert_url: process.env.AUTH_PROVIDER,
-  client_x509_cert_url: process.env.CLIENT_URL,
-};
-
 const inventoryForecast = async (
   req: Request,
   res: Response,
@@ -250,7 +237,7 @@ const inventoryForecast = async (
       select: ["sellingPrice", "weight"],
       populate: {
         path: "itemId",
-        select: ["name", "image", "_id"],
+        select: ["name", "image", "_id", "cartonSize"],
       },
     });
 
@@ -338,7 +325,7 @@ const inventoryForecastDetailed = async (
       select: ["sellingPrice", "weight"],
       populate: {
         path: "itemId",
-        select: ["name", "image", "_id"],
+        select: ["name", "image", "_id", "cartonSize"],
       },
     });
 

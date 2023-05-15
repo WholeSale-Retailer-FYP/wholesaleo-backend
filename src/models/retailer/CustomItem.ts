@@ -9,6 +9,7 @@ export interface ICustomItem {
   sellingPrice: number;
   originalPrice: number;
   quantity: number;
+  cartonSize: number;
   retailerId: mongoose.Types.ObjectId;
   customCategoryId: mongoose.Types.ObjectId;
 }
@@ -27,6 +28,7 @@ const CustomItemSchema: Schema<ICustomItem> = new Schema({
   sellingPrice: { type: Number, required: true },
   originalPrice: { type: Number, required: true },
   quantity: { type: Number, required: true },
+  cartonSize: { type: Number, required: true, default: 1 },
   retailerId: { type: Schema.Types.ObjectId, ref: "Retailer", required: true },
   customCategoryId: {
     type: Schema.Types.ObjectId,

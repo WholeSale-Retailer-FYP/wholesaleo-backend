@@ -17,8 +17,8 @@ router.get("/get/category/:itemCategoryId", controller.readItemOfCategory);
 router.get("/get/", controller.readAllItem);
 router.put(
   "/update/",
-  cloudinaryConfig,
-  multerUploads.multerUploads,
+  // cloudinaryConfig,
+  // multerUploads.multerUploads,
   controller.updateItem
 );
 router.get("/search/:query", controller.searchItem);
