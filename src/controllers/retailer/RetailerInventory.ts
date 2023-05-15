@@ -1,5 +1,4 @@
 import { NextFunction, Request, Response } from "express";
-import mongoose from "mongoose";
 import CustomItem from "../../models/retailer/CustomItem";
 import RetailerInventory from "../../models/retailer/RetailerInventory";
 import { convertCustomItemToDefaultItem } from "./CustomItem";

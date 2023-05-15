@@ -13,6 +13,10 @@ router.get(
 );
 router.put("/update/", controller.updateWarehouseInventory);
 router.get("/search/:query/:warehouseId", controller.searchItem);
+router.get(
+  "/forecast-detailed/:warehouseId/:numDays",
+  controller.inventoryForecastDetailed
+);
 router.delete(
   "/delete/:warehouseInventoryId",
   controller.deleteWarehouseInventory
