@@ -26,10 +26,10 @@ const read = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const adminEmployeeId = req.params.adminEmployeeId;
     const adminEmployee = await AdminEmployee.findById(adminEmployeeId);
-    if (adminEmployee) {
-      res.status(200).json({ data: adminEmployee });
+    if (!adminEmployee) {
+      throw new Error("AdminEmployee Not Found");
     }
-    throw new Error("AdminEmployee Not Found");
+    res.status(200).json({ data: adminEmployee });
   } catch (error) {
     if (error instanceof Error)
       res.status(500).json({ message: error.message });
@@ -39,6 +39,9 @@ const read = async (req: Request, res: Response, next: NextFunction) => {
 const readAll = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const employees = await AdminEmployee.find();
+    if (!employees) {
+      throw new Error("AdminEmployee Not Found");
+    }
     res.status(200).json({ data: employees });
   } catch (error) {
     if (error instanceof Error)
