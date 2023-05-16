@@ -262,10 +262,6 @@ const inventoryForecastDetailed = async (
       select: ["name", "image", "_id", "cartonSize"],
     });
 
-    console.log(warehouseInventory);
-
-    // compare itemId in warehouseInventory and itemId in rows add itemId of items where retailerIventory is less than forecast_value and show the difference
-
     const finalRows = rows
       .map((row: bigQueryResponse) => {
         const { itemId, forecast_value } = row;

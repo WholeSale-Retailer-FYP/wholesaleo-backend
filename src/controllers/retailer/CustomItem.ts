@@ -17,6 +17,7 @@ const createCustomItem = async (
     quantity,
     retailerId,
     customCategoryId,
+    cartonSize,
   } = req.body;
   try {
     const customItem = await CustomItem.create({
@@ -29,6 +30,7 @@ const createCustomItem = async (
       quantity,
       retailerId,
       customCategoryId,
+      cartonSize,
     });
     if (!customItem) throw new Error("Custom Category not created!");
     res.status(201).json({ data: customItem });
