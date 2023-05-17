@@ -121,6 +121,25 @@ const readAllRetailerPOS = async (
   }
 };
 
+const getAllRetailerPOSOfSingleRetailer = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const retailerId = req.params.retailerId;
+    const retailerPOSs = await RetailerPOS.find({ retailerId }).populate({
+      path: "retailerEmployeeId",
+      select: ["firstName", "lastName", "role"],
+    });
+    if (!retailerPOSs) throw new Error("RetailerPOS not found!");
+    res.status(200).json({ data: retailerPOSs });
+  } catch (error) {
+    if (error instanceof Error)
+      res.status(500).json({ message: error.message });
+  }
+};
+
 const updateRetailerPOS = async (
   req: Request,
   res: Response,
@@ -161,6 +180,7 @@ export default {
   createRetailerPOS,
   readAllRetailerPOS,
   readRetailerPOS,
+  getAllRetailerPOSOfSingleRetailer,
   updateRetailerPOS,
   deleteRetailerPOS,
 };
