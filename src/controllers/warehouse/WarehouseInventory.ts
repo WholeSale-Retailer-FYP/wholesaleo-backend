@@ -239,7 +239,7 @@ const inventoryForecastDetailed = async (
     console.log(`Job ${job.id} started.`);
 
     let [rows] = await job.getQueryResults();
-
+    console.log("first");
     rows.forEach((row: bigQueryResponse) => {
       const { forecast_value, lower_bound, upper_bound } = row;
       const [warehouseId, itemId] = row.warehouseItem!.split("_");
@@ -255,6 +255,8 @@ const inventoryForecastDetailed = async (
       delete row.warehouseItem;
     });
 
+    console.log("second");
+
     const warehouseInventory = await WarehouseInventory.find({
       warehouseId,
     }).populate({
@@ -267,6 +269,10 @@ const inventoryForecastDetailed = async (
         const { itemId, forecast_value } = row;
 
         const warehouseInventoryItem = warehouseInventory.find((item) => {
+          if (!item.itemId) {
+            console.log(item);
+            return false;
+          }
           return item.itemId._id == itemId;
         });
 
@@ -284,6 +290,8 @@ const inventoryForecastDetailed = async (
       })
       .filter((row: bigQueryResponse) => row != null);
 
+    console.log("third");
+
     res.status(200).json({ data: finalRows });
   } catch (error) {
     if (error instanceof Error)
@@ -297,10 +305,10 @@ const deleteWarehouseInventory = async (
   next: NextFunction
 ) => {
   try {
-    const _id = req.params.warehouseId;
+    const _id = req.params.warehouseInventoryId;
     const warehouse = await WarehouseInventory.deleteOne({ _id });
-    if (!warehouse) throw new Error("Could not delete!");
-    console.log(warehouse);
+    if (warehouse && warehouse.deletedCount < 1)
+      throw new Error("Could not delete!");
     res.status(201).json({ data: true, message: "Deletion was successful!" });
   } catch (error) {
     if (error instanceof Error)

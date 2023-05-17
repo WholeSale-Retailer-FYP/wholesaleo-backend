@@ -33,11 +33,15 @@ const readWarehouse = async (
 ) => {
   try {
     const warehouseId = req.params.warehouseId;
-    const warehouse = await Warehouse.findById(warehouseId).populate([
-      "cityId",
-      "regionId",
-      "provinceId",
-    ]);
+    const warehouse = await Warehouse.findById(warehouseId).populate({
+      path: "regionId",
+      populate: {
+        path: "cityId",
+        populate: {
+          path: "provinceId",
+        },
+      },
+    });
     if (!warehouse) {
       throw new Error("Warehouse Not Found");
     }
@@ -54,11 +58,15 @@ const readAllWarehouse = async (
   next: NextFunction
 ) => {
   try {
-    const warehouses = await Warehouse.find().populate([
-      "cityId",
-      "regionId",
-      "provinceId",
-    ]);
+    const warehouses = await Warehouse.find().populate({
+      path: "regionId",
+      populate: {
+        path: "cityId",
+        populate: {
+          path: "provinceId",
+        },
+      },
+    });
     res.status(200).json({ data: warehouses });
   } catch (error) {
     if (error instanceof Error)

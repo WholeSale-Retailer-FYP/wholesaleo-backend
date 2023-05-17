@@ -335,6 +335,12 @@ const inventoryForecastDetailed = async (
 
         const retailerInventoryItem = retailerInventory.find((item) => {
           const warehouseInventoryId = item.warehouseInventoryId as any;
+          if (
+            !warehouseInventoryId ||
+            !warehouseInventoryId.itemId ||
+            !warehouseInventoryId.itemId._id
+          )
+            return false;
           return warehouseInventoryId.itemId._id == itemId;
         });
         if (retailerInventoryItem) {
