@@ -37,10 +37,18 @@ const createRetailerPOS = async (
   try {
     session.startTransaction(); //--------------------
 
+    // get total amount from items
+    const totalAmount = items.reduce(
+      (acc: number, item: IItem) => acc + item.sellingPrice,
+      0
+    );
+
     const retailerPOSId = new mongoose.Types.ObjectId();
     await RetailerPOS.create({
       _id: retailerPOSId,
       retailerEmployeeId,
+      totalAmount,
+      retailerId,
     });
 
     const retailerSaleData = await RetailerSaleData.insertMany(
@@ -69,6 +77,7 @@ const createRetailerPOS = async (
   } catch (error) {
     await session.abortTransaction();
     session.endSession();
+    console.log(error);
     if (error instanceof Error)
       res.status(500).json({ message: error.message });
   }
