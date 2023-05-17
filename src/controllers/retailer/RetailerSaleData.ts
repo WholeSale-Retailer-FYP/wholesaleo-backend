@@ -41,10 +41,12 @@ const readRetailerSaleData = async (
       },
       {
         path: "retailerInventoryId",
-        select: ["barcodeId", "sellingPrice"],
+        select: ["barcodeId", "sellingPrice", "itemId"],
         populate: {
-          path: "itemId",
-          select: ["name", "image", "cartonSize"],
+          path: "warehouseInventoryId",
+          populate: {
+            path: "itemId",
+          },
         },
       },
     ]);
@@ -74,13 +76,57 @@ const readAllRetailerSaleData = async (
       },
       {
         path: "retailerInventoryId",
-        select: ["barcodeId", "sellingPrice"],
+        select: ["barcodeId", "sellingPrice", "warehouseInventoryId"],
         populate: {
-          path: "itemId",
-          select: ["name", "image", "cartonSize"],
+          path: "warehouseInventoryId",
+          populate: {
+            path: "itemId",
+          },
         },
       },
     ]);
+    if (!retailerSaleDatas) {
+      throw new Error("RetailerSaleData Not Found");
+    }
+
+    res.status(200).json({ data: retailerSaleDatas });
+  } catch (error) {
+    if (error instanceof Error)
+      res.status(500).json({ message: error.message });
+  }
+};
+
+const getSalesDataOfPOS = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const retailerPOSId = req.params.retailerPOSId;
+    const retailerSaleDatas = await RetailerSaleData.find({
+      retailerPOSId,
+    }).populate([
+      {
+        path: "retailerPOSId",
+        populate: {
+          path: "retailerEmployeeId",
+          select: ["firstName", "lastName", "role"],
+        },
+      },
+      {
+        path: "retailerInventoryId",
+        select: ["barcodeId", "sellingPrice", "warehouseInventoryId"],
+        populate: {
+          path: "warehouseInventoryId",
+          populate: {
+            path: "itemId",
+          },
+        },
+      },
+    ]);
+    if (!retailerSaleDatas) {
+      throw new Error("RetailerSaleData Not Found");
+    }
     res.status(200).json({ data: retailerSaleDatas });
   } catch (error) {
     if (error instanceof Error)
@@ -129,6 +175,7 @@ export default {
   createRetailerSaleData,
   readAllRetailerSaleData,
   readRetailerSaleData,
+  getSalesDataOfPOS,
   updateRetailerSaleData,
   deleteRetailerSaleData,
 };
