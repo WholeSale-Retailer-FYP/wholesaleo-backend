@@ -20,7 +20,6 @@ import RetailerSaleData from "../../models/retailer/RetailerSaleData";
 // };
 interface IItem {
   retailerInventoryId: mongoose.Types.ObjectId;
-  warehouseInventoryId: mongoose.Types.ObjectId;
   quantity: number;
   retailerPurchaseId: mongoose.Types.ObjectId;
   sellingPrice: number;
@@ -64,7 +63,7 @@ const createRetailerPOS = async (
         updateOne: {
           filter: {
             retailerId,
-            warehouseInventoryId: item.warehouseInventoryId,
+            _id: item.retailerInventoryId,
           },
           update: { $inc: { quantity: -item.quantity } },
         },
