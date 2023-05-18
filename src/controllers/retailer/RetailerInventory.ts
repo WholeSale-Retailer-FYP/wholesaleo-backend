@@ -1,5 +1,4 @@
 import { NextFunction, Request, Response } from "express";
-import mongoose from "mongoose";
 import CustomItem from "../../models/retailer/CustomItem";
 import RetailerInventory from "../../models/retailer/RetailerInventory";
 import { convertCustomItemToDefaultItem } from "./CustomItem";
@@ -18,6 +17,7 @@ const createRetailerInventory = async (
     barcodeId,
     retailerId,
     warehouseInventoryId,
+    types,
   } = req.body;
   try {
     const retailer = await RetailerInventory.create({
@@ -28,6 +28,7 @@ const createRetailerInventory = async (
       barcodeId,
       retailerId,
       warehouseInventoryId,
+      types,
     });
     res.status(201).json({ data: retailer });
   } catch (error) {
@@ -75,7 +76,7 @@ const readRetailerInventoryOfRetailer = async (
       {
         path: "warehouseInventoryId",
         select: "weight",
-        populate: { path: "itemId", select: ["name", "image"] },
+        populate: { path: "itemId", select: ["name", "image", "cartonSize"] },
       },
     ]);
 
@@ -99,7 +100,7 @@ const readAllRetailerInventory = async (
       {
         path: "warehouseInventoryId",
         select: "weight",
-        populate: { path: "itemId", select: ["name", "image"] },
+        populate: { path: "itemId", select: ["name", "image", "cartonSize"] },
       },
       { path: "retailerId", select: "shopName" },
     ]);
@@ -180,19 +181,6 @@ interface bigQueryResponse {
       };
 }
 
-// const credentials = {
-//   type: process.env.TYPE,
-//   project_id: process.env.PROJECT_ID,
-//   private_key_id: process.env.PRIVATE_KEY_ID,
-//   private_key: process.env.PRIVATE_KEY,
-//   client_email: process.env.CLIENT_EMAIL,
-//   client_id: process.env.CLIENT_ID,
-//   auth_uri: process.env.AUTH_URI,
-//   token_uri: process.env.TOKEN_URI,
-//   auth_provider_x509_cert_url: process.env.AUTH_PROVIDER,
-//   client_x509_cert_url: process.env.CLIENT_URL,
-// };
-
 const inventoryForecast = async (
   req: Request,
   res: Response,
@@ -201,8 +189,8 @@ const inventoryForecast = async (
   try {
     const { retailerId, numDays } = req.params;
     const bq = new BigQuery({
-      // credentials,
-      keyFilename: "src/config/wholesaleo-fyp-3a9962a0bae8.json",
+      credentials: JSON.parse(process.env.GOOGLE_BIG_QUERY_CREDENTIALS!),
+      // keyFilename: "src/config/wholesaleo-fyp-3a9962a0bae8.json",
       projectId: "wholesaleo-fyp",
     });
 
@@ -248,7 +236,7 @@ const inventoryForecast = async (
       select: ["sellingPrice", "weight"],
       populate: {
         path: "itemId",
-        select: ["name", "image", "_id"],
+        select: ["name", "image", "_id", "cartonSize"],
       },
     });
 
@@ -259,6 +247,12 @@ const inventoryForecast = async (
 
         const retailerInventoryItem = retailerInventory.find((item) => {
           const warehouseInventoryId = item.warehouseInventoryId as any;
+          if (
+            !warehouseInventoryId ||
+            !warehouseInventoryId.itemId ||
+            !warehouseInventoryId.itemId._id
+          )
+            return false;
           return warehouseInventoryId.itemId._id == itemId;
         });
         if (retailerInventoryItem) {
@@ -289,8 +283,7 @@ const inventoryForecastDetailed = async (
   try {
     const { retailerId, numDays } = req.params;
     const bq = new BigQuery({
-      // credentials,
-      keyFilename: "src/config/wholesaleo-fyp-3a9962a0bae8.json",
+      credentials: JSON.parse(process.env.GOOGLE_BIG_QUERY_CREDENTIALS!),
       projectId: "wholesaleo-fyp",
     });
 
@@ -337,7 +330,7 @@ const inventoryForecastDetailed = async (
       select: ["sellingPrice", "weight"],
       populate: {
         path: "itemId",
-        select: ["name", "image", "_id"],
+        select: ["name", "image", "_id", "cartonSize"],
       },
     });
 
@@ -348,6 +341,12 @@ const inventoryForecastDetailed = async (
 
         const retailerInventoryItem = retailerInventory.find((item) => {
           const warehouseInventoryId = item.warehouseInventoryId as any;
+          if (
+            !warehouseInventoryId ||
+            !warehouseInventoryId.itemId ||
+            !warehouseInventoryId.itemId._id
+          )
+            return false;
           return warehouseInventoryId.itemId._id == itemId;
         });
         if (retailerInventoryItem) {
@@ -386,6 +385,7 @@ const updateRetailerInventory = async (
       barcodeId,
       retailerId,
       warehouseInventoryId,
+      types,
     } = req.body;
     const updatedRetailerInventory = await RetailerInventory.updateOne(
       { _id },
@@ -397,6 +397,7 @@ const updateRetailerInventory = async (
         barcodeId: barcodeId,
         retailerId: retailerId,
         warehouseInventoryId,
+        types,
       }
     );
     if (!updatedRetailerInventory)

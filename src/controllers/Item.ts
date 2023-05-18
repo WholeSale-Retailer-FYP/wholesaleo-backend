@@ -4,7 +4,7 @@ import Item from "../models/Item";
 import { UploadApiResponse, v2 as cloudinary } from "cloudinary";
 
 const createItem = async (req: Request, res: Response, next: NextFunction) => {
-  const { name, itemCategoryId } = req.body;
+  const { name, itemCategoryId, cartonSize } = req.body;
   try {
     if (!req.file) res.status(500).json({ message: "No file present" });
     let uploadedFile: UploadApiResponse;
@@ -20,6 +20,7 @@ const createItem = async (req: Request, res: Response, next: NextFunction) => {
       name,
       itemCategoryId,
       image: uploadedFile.secure_url,
+      cartonSize,
     });
     res.status(201).json({ data: item });
   } catch (error) {
@@ -33,12 +34,13 @@ const createItemFromImageLink = async (
   res: Response,
   next: NextFunction
 ) => {
-  const { name, itemCategoryId, image } = req.body;
+  const { name, itemCategoryId, image, cartonSize } = req.body;
   try {
     const item = await Item.create({
       name,
       itemCategoryId,
       image,
+      cartonSize,
     });
     res.status(201).json({ data: item });
   } catch (error) {
@@ -95,23 +97,24 @@ const readAllItem = async (req: Request, res: Response, next: NextFunction) => {
 // todo: Handle image update. Delete previous image in Cloudinary andn test if edited image displaying properly
 const updateItem = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    if (!req.file) res.status(500).json({ message: "No file present" });
-    let uploadedFile: UploadApiResponse;
+    // if (!req.file) res.status(500).json({ message: "No file present" });
+    // let uploadedFile: UploadApiResponse;
 
-    uploadedFile = await cloudinary.uploader.upload(req.file!.path, {
-      folder: "items",
-      resource_type: "auto",
-      width: 350,
-      height: 350,
-    });
+    // uploadedFile = await cloudinary.uploader.upload(req.file!.path, {
+    //   folder: "items",
+    //   resource_type: "auto",
+    //   width: 350,
+    //   height: 350,
+    // });
 
-    const { _id, name, itemCategoryId } = req.body;
+    const { _id, name, itemCategoryId, cartonSize } = req.body;
     const updatedItem = await Item.updateOne(
       { _id },
       {
-        name: name,
-        itemCategoryId: itemCategoryId,
-        image: uploadedFile.secure_url,
+        name,
+        itemCategoryId,
+        // image: uploadedFile.secure_url,
+        cartonSize,
       }
     );
     if (!updatedItem) throw new Error("Item not found!");

@@ -39,6 +39,7 @@ const WarehouseEmployeeSchema = new mongoose_1.Schema({
     phoneNumber: { type: String, required: true, unique: true },
     cnic: { type: String, required: true, unique: true },
     password: { type: String, required: true },
+    email: { type: String, required: true, unique: true },
     role: {
         type: Number,
         enum: Roles,

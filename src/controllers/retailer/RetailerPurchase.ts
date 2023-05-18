@@ -133,16 +133,16 @@ const readPurchasesOfSingleRetailer = async (
         path: "warehouseId",
         populate: [
           {
-            path: "cityId",
-            select: ["name"],
-          },
-          {
             path: "regionId",
             select: ["name"],
-          },
-          {
-            path: "provinceId",
-            select: ["name"],
+            populate: {
+              path: "cityId",
+              select: ["name"],
+              populate: {
+                path: "provinceId",
+                select: ["name"],
+              },
+            },
           },
         ],
       },

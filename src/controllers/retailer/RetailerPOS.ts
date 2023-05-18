@@ -1,17 +1,82 @@
 import { NextFunction, Request, Response } from "express";
 import mongoose from "mongoose";
+import RetailerInventory from "../../models/retailer/RetailerInventory";
 import RetailerPOS from "../../models/retailer/RetailerPOS";
+import RetailerSaleData from "../../models/retailer/RetailerSaleData";
+
+// const createRetailerPOS = async (
+//   req: Request,
+//   res: Response,
+//   next: NextFunction
+// ) => {
+//   const { retailerEmployeeId } = req.body;
+//   try {
+//     const retailerPOS = await RetailerPOS.create({ retailerEmployeeId });
+//     res.status(201).json({ data: retailerPOS });
+//   } catch (error) {
+//     if (error instanceof Error)
+//       res.status(500).json({ message: error.message });
+//   }
+// };
+interface IItem {
+  retailerInventoryId: mongoose.Types.ObjectId;
+  quantity: number;
+  retailerPurchaseId: mongoose.Types.ObjectId;
+  sellingPrice: number;
+  weight: number;
+}
 
 const createRetailerPOS = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
-  const { retailerEmployeeId } = req.body;
+  const { items, retailerId, retailerEmployeeId } = req.body;
+  const session = await mongoose.startSession();
   try {
-    const retailerPOS = await RetailerPOS.create({ retailerEmployeeId });
-    res.status(201).json({ data: retailerPOS });
+    session.startTransaction(); //--------------------
+
+    // get total amount from items
+    const totalAmount = items.reduce(
+      (acc: number, item: IItem) => acc + item.sellingPrice,
+      0
+    );
+
+    const retailerPOSId = new mongoose.Types.ObjectId();
+    await RetailerPOS.create({
+      _id: retailerPOSId,
+      retailerEmployeeId,
+      totalAmount,
+      retailerId,
+    });
+
+    const retailerSaleData = await RetailerSaleData.insertMany(
+      items.map((item: IItem) => ({
+        retailerInventoryId: item.retailerInventoryId,
+        quantity: item.quantity,
+        retailerPOSId: retailerPOSId,
+      }))
+    );
+
+    await RetailerInventory.bulkWrite(
+      items.map((item: IItem) => ({
+        updateOne: {
+          filter: {
+            retailerId,
+            _id: item.retailerInventoryId,
+          },
+          update: { $inc: { quantity: -item.quantity } },
+        },
+      }))
+    );
+
+    await session.commitTransaction(); //--------------------
+    session.endSession();
+    res.status(201).json({ data: retailerSaleData });
   } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
+    console.log(error);
     if (error instanceof Error)
       res.status(500).json({ message: error.message });
   }
@@ -55,6 +120,25 @@ const readAllRetailerPOS = async (
   }
 };
 
+const getAllRetailerPOSOfSingleRetailer = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const retailerId = req.params.retailerId;
+    const retailerPOSs = await RetailerPOS.find({ retailerId }).populate({
+      path: "retailerEmployeeId",
+      select: ["firstName", "lastName", "role"],
+    });
+    if (!retailerPOSs) throw new Error("RetailerPOS not found!");
+    res.status(200).json({ data: retailerPOSs });
+  } catch (error) {
+    if (error instanceof Error)
+      res.status(500).json({ message: error.message });
+  }
+};
+
 const updateRetailerPOS = async (
   req: Request,
   res: Response,
@@ -64,7 +148,7 @@ const updateRetailerPOS = async (
     const { _id, retailerEmployeeId } = req.body;
     const updatedRetailerPOS = await RetailerPOS.updateOne(
       { _id },
-      { retailerEmployeeId: retailerEmployeeId }
+      { retailerEmployeeId }
     );
     if (!updatedRetailerPOS) throw new Error("RetailerPOS not found!");
     res.status(201).json({ data: updatedRetailerPOS });
@@ -95,6 +179,7 @@ export default {
   createRetailerPOS,
   readAllRetailerPOS,
   readRetailerPOS,
+  getAllRetailerPOSOfSingleRetailer,
   updateRetailerPOS,
   deleteRetailerPOS,
 };

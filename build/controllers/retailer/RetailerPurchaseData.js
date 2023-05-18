@@ -84,6 +84,38 @@ const readAllRetailerPurchaseData = (req, res, next) => __awaiter(void 0, void 0
             res.status(500).json({ message: error.message });
     }
 });
+const readDataOfPurchase = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const retailerPurchaseId = req.params.retailerPurchaseId;
+        const retailerPurchaseData = yield RetailerPurchaseData_1.default.find({
+            retailerPurchaseId,
+        }).populate([
+            {
+                path: "retailerPurchaseId",
+                populate: {
+                    path: "retailerId",
+                    select: ["firstName", "lastName", "role"],
+                },
+            },
+            {
+                path: "warehouseInventoryId",
+                select: ["barcodeId", "sellingPrice"],
+                populate: {
+                    path: "itemId",
+                    select: ["name", "image"],
+                },
+            },
+        ]);
+        if (!retailerPurchaseData) {
+            throw new Error("RetailerPurchaseData Not Found");
+        }
+        res.status(200).json({ data: retailerPurchaseData });
+    }
+    catch (error) {
+        if (error instanceof Error)
+            res.status(500).json({ message: error.message });
+    }
+});
 const updateRetailerPurchaseData = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { _id, warehouseInventoryId, quantity, retailerPurchaseId } = req.body;
@@ -114,6 +146,7 @@ exports.default = {
     createRetailerPurchaseData,
     readAllRetailerPurchaseData,
     readRetailerPurchaseData,
+    readDataOfPurchase,
     updateRetailerPurchaseData,
     deleteRetailerPurchaseData,
 };

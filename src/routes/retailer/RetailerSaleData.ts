@@ -6,6 +6,7 @@ const router = express.Router();
 router.post("/create", controller.createRetailerSaleData);
 router.get("/get/:retailerSaleDataId", controller.readRetailerSaleData);
 router.get("/get/", controller.readAllRetailerSaleData);
+router.get("/get/ofPOS/:retailerPOSId", controller.getSalesDataOfPOS);
 router.put("/update/", controller.updateRetailerSaleData);
 router.delete("/delete/:retailerSaleDataId", controller.deleteRetailerSaleData);
 

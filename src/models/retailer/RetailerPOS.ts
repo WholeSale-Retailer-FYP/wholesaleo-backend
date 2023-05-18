@@ -5,9 +5,9 @@ export interface IRetailerPOS {
   datetime: Date;
   orderNumber: string;
   retailerEmployeeId: mongoose.Types.ObjectId;
+  totalAmount: number;
   // TODO: Is the schema correct? Do I need amount here?
-  // amount: number;
-  //   retailerId: mongoose.Types.ObjectId;
+  retailerId: mongoose.Types.ObjectId;
 }
 
 export interface IRetailerPOSModel extends IRetailerPOS, Document {}
@@ -15,17 +15,17 @@ export interface IRetailerPOSModel extends IRetailerPOS, Document {}
 const RetailerPOSSchema: Schema = new Schema({
   datetime: { type: Date, default: Date.now },
   orderNumber: { type: String, default: uuidv1() },
-  // amount: { type: Number, required: true },
+  totalAmount: { type: Number, required: true },
   retailerEmployeeId: {
     type: Schema.Types.ObjectId,
     ref: "RetailerEmployee",
     required: true,
   },
-  //   retailerId: {
-  //     type: Schema.Types.ObjectId,
-  //     ref: "Retailer",
-  //     required: true,
-  //   },
+  retailerId: {
+    type: Schema.Types.ObjectId,
+    ref: "Retailer",
+    required: true,
+  },
 });
 
 export default mongoose.model<IRetailerPOSModel>(

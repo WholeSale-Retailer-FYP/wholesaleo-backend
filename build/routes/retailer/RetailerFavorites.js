@@ -7,6 +7,7 @@ const RetailerFavorites_1 = __importDefault(require("../../controllers/retailer/
 const router = express_1.default.Router();
 router.post("/create", RetailerFavorites_1.default.createRetailerFavorites);
 router.get("/get/:retailerFavoritesId", RetailerFavorites_1.default.readRetailerFavorites);
+router.get("/get/retailer/:retailerId", RetailerFavorites_1.default.readFavoritesOfRetailer);
 router.get("/get/", RetailerFavorites_1.default.readAllRetailerFavorites);
 router.put("/update/", RetailerFavorites_1.default.updateRetailerFavorites);
 router.delete("/delete/:retailerFavoritesId", RetailerFavorites_1.default.deleteRetailerFavorites);

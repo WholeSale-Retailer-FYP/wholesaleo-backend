@@ -43,7 +43,7 @@ const readRetailerPurchaseData = async (
         select: ["barcodeId", "sellingPrice"],
         populate: {
           path: "itemId",
-          select: ["name", "image"],
+          select: ["name", "image", "cartonSize"],
         },
       },
     ]);
@@ -76,7 +76,7 @@ const readAllRetailerPurchaseData = async (
         select: ["barcodeId", "sellingPrice"],
         populate: {
           path: "itemId",
-          select: ["name", "image"],
+          select: ["name", "image", "cartonSize"],
         },
       },
     ]);
@@ -109,7 +109,7 @@ const readDataOfPurchase = async (
         select: ["barcodeId", "sellingPrice"],
         populate: {
           path: "itemId",
-          select: ["name", "image"],
+          select: ["name", "image", "cartonSize"],
         },
       },
     ]);

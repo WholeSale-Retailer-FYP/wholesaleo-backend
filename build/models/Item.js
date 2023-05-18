@@ -32,5 +32,7 @@ const ItemSchema = new mongoose_1.Schema({
         required: true,
         ref: "ItemCategory",
     },
+    types: [{ type: Object, required: true }],
 });
+ItemSchema.index({ name: "text" });
 exports.default = mongoose_1.default.model("Item", ItemSchema);

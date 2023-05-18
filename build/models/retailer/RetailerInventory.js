@@ -27,14 +27,18 @@ const mongoose_1 = __importStar(require("mongoose"));
 const RetailerInventorySchema = new mongoose_1.Schema({
     quantity: { type: Number, required: true },
     originalPrice: { type: Number, required: true },
-    sellingPrice: { type: Number, required: true },
+    sellingPrice: { type: Number, default: -1 },
     weight: { type: Number, required: true },
-    barcodeId: { type: String, required: true },
+    barcodeId: { type: String },
     retailerId: {
         type: mongoose_1.Schema.Types.ObjectId,
         required: true,
         ref: "Retailer",
     },
-    itemId: { type: mongoose_1.Schema.Types.ObjectId, required: true, ref: "Item" },
+    warehouseInventoryId: {
+        type: mongoose_1.Schema.Types.ObjectId,
+        required: true,
+        ref: "WarehouseInventory",
+    },
 });
 exports.default = mongoose_1.default.model("RetailerInventory", RetailerInventorySchema);

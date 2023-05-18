@@ -12,14 +12,41 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const mongoose_1 = __importDefault(require("mongoose"));
+const RetailerInventory_1 = __importDefault(require("../../models/retailer/RetailerInventory"));
 const RetailerPOS_1 = __importDefault(require("../../models/retailer/RetailerPOS"));
+const RetailerSaleData_1 = __importDefault(require("../../models/retailer/RetailerSaleData"));
 const createRetailerPOS = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    const { retailerEmployeeId } = req.body;
+    const { items, retailerId, retailerEmployeeId } = req.body;
+    const session = yield mongoose_1.default.startSession();
     try {
-        const retailerPOS = yield RetailerPOS_1.default.create({ retailerEmployeeId });
-        res.status(201).json({ data: retailerPOS });
+        session.startTransaction(); //--------------------
+        const retailerPOSId = new mongoose_1.default.Types.ObjectId();
+        yield RetailerPOS_1.default.create({
+            _id: retailerPOSId,
+            retailerEmployeeId,
+        });
+        const retailerSaleData = yield RetailerSaleData_1.default.insertMany(items.map((item) => ({
+            retailerInventoryId: item.retailerInventoryId,
+            quantity: item.quantity,
+            retailerPOSId: retailerPOSId,
+        })));
+        yield RetailerInventory_1.default.bulkWrite(items.map((item) => ({
+            updateOne: {
+                filter: {
+                    retailerId,
+                    warehouseInventoryId: item.warehouseInventoryId,
+                },
+                update: { $inc: { quantity: -item.quantity } },
+            },
+        })));
+        yield session.commitTransaction(); //--------------------
+        session.endSession();
+        res.status(201).json({ data: retailerSaleData });
     }
     catch (error) {
+        yield session.abortTransaction();
+        session.endSession();
         if (error instanceof Error)
             res.status(500).json({ message: error.message });
     }

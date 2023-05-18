@@ -33,10 +33,10 @@ const RetailerPOSSchema = new mongoose_1.Schema({
         ref: "RetailerEmployee",
         required: true,
     },
-    //   retailerId: {
-    //     type: Schema.Types.ObjectId,
-    //     ref: "Retailer",
-    //     required: true,
-    //   },
+    retailerId: {
+        type: mongoose_1.Schema.Types.ObjectId,
+        ref: "Retailer",
+        required: true,
+    },
 });
 exports.default = mongoose_1.default.model("RetailerPOS", RetailerPOSSchema);
