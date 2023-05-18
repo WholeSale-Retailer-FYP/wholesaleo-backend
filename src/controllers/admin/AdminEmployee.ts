@@ -1,5 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import AdminEmployee from "../../models/admin/AdminEmployee";
+import Retailer from "../../models/retailer/Retailer";
+import Warehouse from "../../models/warehouse/Warehouse";
 
 const create = async (req: Request, res: Response, next: NextFunction) => {
   const { name, email, password, role, cnic, provinceId, cityId, regionId } =
@@ -92,10 +94,25 @@ const deleteAdminEmployee = async (
   }
 };
 
+const getCount = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const countAdmin = await AdminEmployee.countDocuments();
+    const countWarehouse = await Warehouse.countDocuments();
+    const countRetailer = await Retailer.countDocuments();
+    res
+      .status(200)
+      .json({ data: { countAdmin, countWarehouse, countRetailer } });
+  } catch (error) {
+    if (error instanceof Error)
+      res.status(500).json({ message: error.message });
+  }
+};
+
 export default {
   create,
   readAll,
   read,
   update,
+  getCount,
   deleteAdminEmployee,
 };

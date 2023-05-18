@@ -7,6 +7,11 @@ const router = express.Router();
 
 router.post("/create", controller.create);
 router.get(
+  "/get/count",
+  // auth([Roles.Manager, Roles.Employee]),
+  controller.getCount
+);
+router.get(
   "/get/:adminEmployeeId",
   // auth([Roles.Manager, Roles.Employee]),
   controller.read
