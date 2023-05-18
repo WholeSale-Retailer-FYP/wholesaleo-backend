@@ -133,6 +133,8 @@ const updateItemCategory = async (
       { _id },
       { name: name }
     );
+    if (updatedItemCategory.acknowledged === false)
+      throw new Error("Could not update!");
     if (!updatedItemCategory) throw new Error("ItemCategory not found!");
     res.status(201).json({ data: updatedItemCategory });
   } catch (error) {
